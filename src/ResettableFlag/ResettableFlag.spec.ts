@@ -7,7 +7,7 @@ vi.useFakeTimers();
 describe("ResettableFlag", () => {
     afterEach(async () => {
         await vi.runAllTimersAsync();
-    })
+    });
 
     test("should have value=true by default", () => {
         const flag = new ResettableFlag();

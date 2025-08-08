@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="/style.css" rel="stylesheet" />
+  <title>RawPinchDetector</title>
+  <style>
+      .RawPinchDetector {
+          position: relative;
+          height: 400px;
+          width: 100%;
+          padding: 20px;
+          background: lightgray;
+          touch-action: none;
+          display: flex;
+          justify-content: start;
+          align-items: center;
+          font-size: 24px;
+          line-height: 2;
+          color: #333;
+      }
+  </style>
+</head>
+<body>
+<h1>RawPinchDetector</h1>
+<div class="RawPinchDetector" id="RawPinchDetector"></div>
+<button id="disposeButton">Dispose</button>
+<script type="module" src="./RawPinchDetector.demo.ts"></script>
+</body>
+</html>
