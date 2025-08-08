@@ -23,7 +23,35 @@
   </style>
 </head>
 <body>
-<h1>RawPinchDetector</h1>
+<article>
+  <header>
+    <h1>RawPinchDetector</h1>
+    <p>
+      RawPinchDetector handles finger touches on a target element to track gestures.
+      It exposes callbacks for when a pinch starts (<code>onStart</code>) and when finger movement occurs (<code>onPinch</code>).
+    </p>
+  </header>
+
+  <h2>Key features</h2>
+  <ul>
+    <li>
+      <strong>Gesture metrics</strong> — Provides getters for the pinch center
+      (midpoint of the two initial touches), distance (current gap between fingers),
+      and shift (average movement of the two fingers from their start points).
+    </li>
+    <li>
+      <strong>Robust multi-touch handling</strong> — Always uses the two most recently
+      active pointers, ensuring correct behavior even when additional fingers are on the screen
+      or one hand is already touching the device.
+    </li>
+    <li>
+      <strong>Accidental pinch prevention</strong> — The pinch detection
+      temporarily disables for 100&nbsp;ms after a finger is lifted,
+      avoiding unintended cross-hand pinches during sequential finger lifts.
+    </li>
+  </ul>
+</article>
+
 <div class="RawPinchDetector" id="RawPinchDetector"></div>
 <button id="disposeButton">Dispose</button>
 <script type="module" src="./RawPinchDetector.demo.ts"></script>
