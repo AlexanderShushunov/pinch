@@ -7,6 +7,7 @@ function withId(id: number) {
 
 export class RawPinchDetector implements Disposable {
     private readonly element: HTMLElement;
+    private elementPos = { top: 0, left: 0 };
     private readonly onStart: () => void;
     private readonly onPinch: () => void;
     private readonly activePointers: PointerEvent[] = [];
@@ -50,8 +51,8 @@ export class RawPinchDetector implements Disposable {
         const firstStart = this.startPointers[this.firstIndex];
         const secondStart = this.startPointers[this.secondIndex];
         return {
-            x: (firstStart.offsetX + secondStart.offsetX) / 2,
-            y: (firstStart.offsetY + secondStart.offsetY) / 2,
+            x: (firstStart.pageX + secondStart.pageX) / 2 - this.elementPos.left,
+            y: (firstStart.pageY + secondStart.pageY) / 2 - this.elementPos.top,
         };
     }
 
@@ -61,7 +62,7 @@ export class RawPinchDetector implements Disposable {
         }
         const first = this.activePointers[this.firstIndex];
         const second = this.activePointers[this.secondIndex];
-        return Math.hypot(first.offsetX - second.offsetX, first.offsetY - second.offsetY);
+        return Math.hypot(first.pageX - second.pageX, first.pageY - second.pageY);
     }
 
     public get shift(): { x: number; y: number; } {
@@ -73,8 +74,8 @@ export class RawPinchDetector implements Disposable {
         const firstStart = this.startPointers[this.firstIndex];
         const secondStart = this.startPointers[this.secondIndex];
         return {
-            x: (first.offsetX - firstStart.offsetX + second.offsetX - secondStart.offsetX) / 2,
-            y: (first.offsetY - firstStart.offsetY + second.offsetY - secondStart.offsetY) / 2,
+            x: (first.pageX - firstStart.pageX + second.pageX - secondStart.pageX) / 2,
+            y: (first.pageY - firstStart.pageY + second.pageY - secondStart.pageY) / 2,
         };
     }
 
@@ -82,6 +83,8 @@ export class RawPinchDetector implements Disposable {
         this.activePointers.push(event);
         this.startPointers.push(event);
         if (this.isPinch) {
+            this.elementPos.top = this.element.offsetTop;
+            this.elementPos.left = this.element.offsetLeft;
             this.onStart();
         }
     };

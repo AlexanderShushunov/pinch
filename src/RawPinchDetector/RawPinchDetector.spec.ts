@@ -38,8 +38,8 @@ describe("RawPinchDetector", () => {
 
     test("should invoke onStart callback when user touches screen with two fingers", async () => {
         await asyncPointer([
-            { keys: "[TouchA>]", target: element, coords: { offsetX: 100, offsetY: 200 } },
-            { keys: "[TouchB>]", target: element, coords: { offsetX: 300, offsetY: 400 } },
+            { keys: "[TouchA>]", target: element, coords: { pageX: 100, pageY: 200 } },
+            { keys: "[TouchB>]", target: element, coords: { pageX: 300, pageY: 400 } },
         ]);
 
         expect(onStart).toHaveBeenCalledTimes(1);
@@ -47,18 +47,20 @@ describe("RawPinchDetector", () => {
 
     test("should invoke onPinch callback when user moves fingers", async () => {
         await asyncPointer([
-            { keys: "[TouchA>]", target: element, coords: { offsetX: 10, offsetY: 20 } },
-            { keys: "[TouchB>]", target: element, coords: { offsetX: 50, offsetY: 60 } },
-            { pointerName: "TouchA", target: element, coords: { offsetX: 30, offsetY: 40 } },
+            { keys: "[TouchA>]", target: element, coords: { pageX: 10, pageY: 20 } },
+            { keys: "[TouchB>]", target: element, coords: { pageX: 50, pageY: 60 } },
+            { pointerName: "TouchA", target: element, coords: { pageX: 30, pageY: 40 } },
         ]);
 
         expect(onPinch).toHaveBeenCalledTimes(1);
     });
 
     test("should calc center as a center between start fingers' positions", async () => {
+        Object.defineProperty(element, "offsetLeft", { value: 50, configurable: true });
+        Object.defineProperty(element, "offsetTop", { value: 100, configurable: true });
         await asyncPointer([
-            { keys: "[TouchA>]", target: element, coords: { offsetX: 100, offsetY: 200 } },
-            { keys: "[TouchB>]", target: element, coords: { offsetX: 300, offsetY: 400 } },
+            { keys: "[TouchA>]", target: element, coords: { pageX: 150, pageY: 300 } },
+            { keys: "[TouchB>]", target: element, coords: { pageX: 350, pageY: 500 } },
         ]);
 
         expect(detector.center).toEqual({ x: 200, y: 300 });
@@ -66,10 +68,10 @@ describe("RawPinchDetector", () => {
 
     test("should calc distance as a distance between last fingers' positions", async () => {
         await asyncPointer([
-            { keys: "[TouchA>]", target: element, coords: { offsetX: 10, offsetY: 20 } },
-            { keys: "[TouchB>]", target: element, coords: { offsetX: 50, offsetY: 60 } },
-            { pointerName: "TouchA", target: element, coords: { offsetX: 30, offsetY: 40 } },
-            { pointerName: "TouchB", target: element, coords: { offsetX: 90, offsetY: 100 } },
+            { keys: "[TouchA>]", target: element, coords: { pageX: 10, pageY: 20 } },
+            { keys: "[TouchB>]", target: element, coords: { pageX: 50, pageY: 60 } },
+            { pointerName: "TouchA", target: element, coords: { pageX: 30, pageY: 40 } },
+            { pointerName: "TouchB", target: element, coords: { pageX: 90, pageY: 100 } },
         ]);
 
         // Distance should be sqrt((90-30)^2 + (100-40)^2) = sqrt(60^2 + 60^2) = 84.85...
@@ -78,12 +80,12 @@ describe("RawPinchDetector", () => {
 
     test("should calculate shift as a shift of the center between fingers", async () => {
         await asyncPointer([
-            { keys: "[TouchA>]", target: element, coords: { offsetX: 10, offsetY: 20 } },
-            { keys: "[TouchB>]", target: element, coords: { offsetX: 30, offsetY: 40 } },
+            { keys: "[TouchA>]", target: element, coords: { pageX: 10, pageY: 20 } },
+            { keys: "[TouchB>]", target: element, coords: { pageX: 30, pageY: 40 } },
         ]);
         await asyncPointer([
-            { pointerName: "TouchA", target: element, coords: { offsetX: 20, offsetY: 30 } },
-            { pointerName: "TouchA", target: element, coords: { offsetX: 50, offsetY: 60 } },
+            { pointerName: "TouchA", target: element, coords: { pageX: 20, pageY: 30 } },
+            { pointerName: "TouchA", target: element, coords: { pageX: 50, pageY: 60 } },
         ]);
 
         expect(detector.shift).toEqual({ x: 20, y: 20 });
@@ -95,14 +97,14 @@ describe("RawPinchDetector", () => {
                     the detector should handle only second hand pinching`, () => {
         beforeEach(async () => {
             await asyncPointer([
-                { keys: "[TouchA>]", target: element, coords: { offsetX: 500, offsetY: 500 } },
+                { keys: "[TouchA>]", target: element, coords: { pageX: 500, pageY: 500 } },
             ]);
         });
 
         test("should invoke onStart callback when user touches screen with thread fingers", async () => {
             await asyncPointer([
-                { keys: "[TouchB>]", target: element, coords: { offsetX: 100, offsetY: 200 } },
-                { keys: "[TouchC>]", target: element, coords: { offsetX: 300, offsetY: 400 } },
+                { keys: "[TouchB>]", target: element, coords: { pageX: 100, pageY: 200 } },
+                { keys: "[TouchC>]", target: element, coords: { pageX: 300, pageY: 400 } },
             ]);
 
             expect(onStart).toHaveBeenCalledTimes(2);
@@ -110,10 +112,10 @@ describe("RawPinchDetector", () => {
 
         test("should handle two latest fingers as a 'pinching source'", async () => {
             await asyncPointer([
-                { keys: "[TouchB>]", target: element, coords: { offsetX: 40, offsetY: 40 } },
-                { keys: "[TouchC>]", target: element, coords: { offsetX: 80, offsetY: 80 } },
-                { pointerName: "TouchB", target: element, coords: { offsetX: 60, offsetY: 60 } },
-                { pointerName: "TouchC", target: element, coords: { offsetX: 100, offsetY: 100 } },
+                { keys: "[TouchB>]", target: element, coords: { pageX: 40, pageY: 40 } },
+                { keys: "[TouchC>]", target: element, coords: { pageX: 80, pageY: 80 } },
+                { pointerName: "TouchB", target: element, coords: { pageX: 60, pageY: 60 } },
+                { pointerName: "TouchC", target: element, coords: { pageX: 100, pageY: 100 } },
             ]);
 
             expect(detector.center).toEqual({ x: 60, y: 60 });
@@ -129,9 +131,9 @@ describe("RawPinchDetector", () => {
                  the first finger on the second hand.`, () => {
             test("should disable move processing for a short time after finger up", async () => {
                 await asyncPointer([
-                    { keys: "[TouchB>]", target: element, coords: { offsetX: 40, offsetY: 40 } },
-                    { keys: "[TouchC>]", target: element, coords: { offsetX: 80, offsetY: 80 } },
-                    { pointerName: "TouchC", target: element, coords: { offsetX: 90, offsetY: 90 } },
+                    { keys: "[TouchB>]", target: element, coords: { pageX: 40, pageY: 40 } },
+                    { keys: "[TouchC>]", target: element, coords: { pageX: 80, pageY: 80 } },
+                    { pointerName: "TouchC", target: element, coords: { pageX: 90, pageY: 90 } },
                 ]);
                 await asyncPointer([
                     { keys: "[/TouchC]" },
@@ -140,7 +142,7 @@ describe("RawPinchDetector", () => {
                 onPinch.mockClear();
 
                 await asyncPointer([
-                    { pointerName: "TouchB", target: element, coords: { offsetX: 20, offsetY: 20 } },
+                    { pointerName: "TouchB", target: element, coords: { pageX: 20, pageY: 20 } },
                 ]);
 
                 expect(onPinch).not.toHaveBeenCalled();
@@ -148,9 +150,9 @@ describe("RawPinchDetector", () => {
 
             test("should enable move processing for 100 ms after finger up", async () => {
                 await asyncPointer([
-                    { keys: "[TouchB>]", target: element, coords: { offsetX: 40, offsetY: 40 } },
-                    { keys: "[TouchC>]", target: element, coords: { offsetX: 80, offsetY: 80 } },
-                    { pointerName: "TouchC", target: element, coords: { offsetX: 90, offsetY: 90 } },
+                    { keys: "[TouchB>]", target: element, coords: { pageX: 40, pageY: 40 } },
+                    { keys: "[TouchC>]", target: element, coords: { pageX: 80, pageY: 80 } },
+                    { pointerName: "TouchC", target: element, coords: { pageX: 90, pageY: 90 } },
                 ]);
                 await asyncPointer([
                     { keys: "[/TouchC]" },
@@ -160,7 +162,7 @@ describe("RawPinchDetector", () => {
                 await vi.advanceTimersByTimeAsync(100);
 
                 await asyncPointer([
-                    { pointerName: "TouchB", target: element, coords: { offsetX: 20, offsetY: 20 } },
+                    { pointerName: "TouchB", target: element, coords: { pageX: 20, pageY: 20 } },
                 ]);
 
                 expect(onPinch).toHaveBeenCalledTimes(1);
@@ -184,8 +186,8 @@ describe("RawPinchDetector", () => {
 
         test("should clear disableAfterUp timer on dispose", async () => {
             await asyncPointer([
-                { keys: "[TouchB>]", target: element, coords: { offsetX: 40, offsetY: 40 } },
-                { keys: "[TouchC>]", target: element, coords: { offsetX: 80, offsetY: 80 } },
+                { keys: "[TouchB>]", target: element, coords: { pageX: 40, pageY: 40 } },
+                { keys: "[TouchC>]", target: element, coords: { pageX: 80, pageY: 80 } },
             ]);
             await asyncPointer([
                 { keys: "[/TouchC]" },
