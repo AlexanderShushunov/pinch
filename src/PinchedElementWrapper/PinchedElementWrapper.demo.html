@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="/style.css" rel="stylesheet" />
+  <title>PinchedElementWrapper</title>
+  <style>
+      .PinchedElementWrapper {
+          position: relative;
+          height: 100px;
+          width: 100px;
+          padding: 5px;
+          margin: 20px auto;
+          background: lightgray;
+          touch-action: none;
+          display: flex;
+          justify-content: start;
+          align-items: center;
+          font-size: 12px;
+          line-height: 1;
+          color: #333;
+      }
+
+      .controls {
+          z-index: 1;
+          position: relative;
+          margin: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+      }
+
+      .button-group {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 10px;
+      }
+
+      .settings {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          margin-bottom: 10px;
+      }
+
+      .setting-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+      }
+  </style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>PinchedElementWrapper</h1>
+    <p>
+      PinchedElementWrapper handles smooth transformations of DOM elements with zoom and translation,
+      with optional transition animations.
+    </p>
+  </header>
+
+  <h2>Key features</h2>
+  <ul>
+    <li>
+      <strong>Efficient transformations</strong> — Uses <code>requestAnimationFrame</code> to batch
+      transformations for optimal performance.
+    </li>
+    <li>
+      <strong>Optional transitions</strong> — Can apply CSS transitions for smooth animations
+      between transform states.
+    </li>
+    <li>
+      <strong>Element size tracking</strong> — Maintains the element's original dimensions
+      for reference during transformations.
+    </li>
+  </ul>
+</article>
+
+<div class="controls">
+  <div class="settings">
+    <div class="setting-row">
+      <label for="moveTime">Animation duration (ms):</label>
+      <input type="number" id="moveTime" value="400" min="0" max="2000" step="50" />
+    </div>
+    <div class="setting-row">
+      <label for="withTransition">Use transition:</label>
+      <input type="checkbox" id="withTransition" />
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button id="moveRandomlyButton">Move Randomly</button>
+    <button id="resetButton">Reset</button>
+    <button id="moveTopZoomButton">Move Top and Zoom In (300 calls)</button>
+  </div>
+</div>
+
+<div class="PinchedElementWrapper" id="PinchedElementWrapper">
+  Element wrapped by PinchedElementWrapper
+</div>
+
+<script type="module" src="./PinchedElementWrapper.demo.ts"></script>
+</body>
+</html>
+
