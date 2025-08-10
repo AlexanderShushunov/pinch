@@ -62,18 +62,10 @@ function initRawPinchDetectorDemo() {
             ctx.stroke();
             ctx.font = "16px Arial";
             ctx.fillStyle = "black";
-            ctx.fillText(
-                `center: ${center.x.toFixed(2)}, ${center.y.toFixed(2)}`, 20, 20,
-            );
-            ctx.fillText(
-                `shift: ${shift.x.toFixed(2)}, ${shift.y.toFixed(2)}`, 20, 40,
-            );
-            ctx.fillText(
-                `distance: ${distance.toFixed(2)}`, 20, 60,
-            );
-            ctx.fillText(
-                `isPinch: ${isPinch}`, 20, 80,
-            );
+            ctx.fillText(`center: ${center.x.toFixed(2)}, ${center.y.toFixed(2)}`, 20, 20);
+            ctx.fillText(`shift: ${shift.x.toFixed(2)}, ${shift.y.toFixed(2)}`, 20, 40);
+            ctx.fillText(`distance: ${distance.toFixed(2)}`, 20, 60);
+            ctx.fillText(`isPinch: ${isPinch}`, 20, 80);
         }
     };
 

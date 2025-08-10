@@ -31,21 +31,31 @@ describe("Pinch", () => {
         distance = 0;
         center = { x: 0, y: 0 };
         const startSize = { width: 300, height: 200 };
-        RawPinchDetectorMock
-            .mockClear()
-            .mockImplementation(() => ({
-                get center() { return center; },
-                get distance() { return distance; },
-                get shift() { return shift; },
-                dispose: vi.fn(),
-            } as unknown as RawPinchDetector));
+        RawPinchDetectorMock.mockClear().mockImplementation(
+            () =>
+                ({
+                    get center() {
+                        return center;
+                    },
+                    get distance() {
+                        return distance;
+                    },
+                    get shift() {
+                        return shift;
+                    },
+                    dispose: vi.fn(),
+                }) as unknown as RawPinchDetector,
+        );
 
-        PinchedElementWrapperMock
-            .mockReset()
-            .mockImplementation(() => ({
-                get startSize() { return startSize; },
-                transform: vi.fn(),
-            } as unknown as PinchedElementWrapper));
+        PinchedElementWrapperMock.mockReset().mockImplementation(
+            () =>
+                ({
+                    get startSize() {
+                        return startSize;
+                    },
+                    transform: vi.fn(),
+                }) as unknown as PinchedElementWrapper,
+        );
     });
 
     function createPinch(params: Partial<ConstructorParameters<typeof Pinchable>[1]> = {}) {
@@ -62,18 +72,12 @@ describe("Pinch", () => {
 
         return {
             pinchable: pinchable,
-            start(val: {
-                center: { x: number; y: number; };
-                distance: number;
-            }) {
+            start(val: { center: { x: number; y: number }; distance: number }) {
                 center = val.center;
                 distance = val.distance;
                 onStart();
             },
-            move(val: {
-                distance?: number;
-                shift?: { x: number; y: number; };
-            }) {
+            move(val: { distance?: number; shift?: { x: number; y: number } }) {
                 distance = val.distance ?? distance;
                 shift = val.shift ?? shift;
                 onPinch();

@@ -8,7 +8,14 @@ function initPinchedElementWrapperDemo() {
     const transitionCheckbox = document.getElementById("withTransition") as HTMLInputElement;
     const moveTimeInput = document.getElementById("moveTime") as HTMLInputElement;
 
-    if (!element || !moveRandomlyButton || !resetButton || !moveTopZoomButton || !transitionCheckbox || !moveTimeInput) {
+    if (
+        !element ||
+        !moveRandomlyButton ||
+        !resetButton ||
+        !moveTopZoomButton ||
+        !transitionCheckbox ||
+        !moveTimeInput
+    ) {
         console.error("Required elements not found in the document.");
         return;
     }
@@ -52,7 +59,7 @@ function initPinchedElementWrapperDemo() {
             setTimeout(() => {
                 const randomShift = Math.random() * 4 - 2;
                 pinchedElementWrapper.transform({
-                    zoom: 1 + 0.5 * (i + 1) / 300, // Incremental zoom
+                    zoom: 1 + (0.5 * (i + 1)) / 300, // Incremental zoom
                     translate: { y: -i + randomShift, x: 0 },
                     withTransition: withTransition,
                 });
@@ -62,4 +69,3 @@ function initPinchedElementWrapperDemo() {
 }
 
 initPinchedElementWrapperDemo();
-

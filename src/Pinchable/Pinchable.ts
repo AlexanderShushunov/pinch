@@ -57,10 +57,7 @@ export class Pinchable implements Disposable {
         this.startPinchingCallbacks = [];
     }
 
-    public focus(
-        { zoom, to }:
-        { zoom?: number; to: { x: number; y: number; }; },
-    ): void {
+    public focus({ zoom, to }: { zoom?: number; to: { x: number; y: number } }): void {
         this.disableAfterApply.reset();
         if (zoom !== undefined) {
             this.zoom = zoom;
@@ -150,7 +147,7 @@ export class Pinchable implements Disposable {
         };
     }
 
-    private calculateThresholdShift(pinchShift: { x: number; y: number; }) {
+    private calculateThresholdShift(pinchShift: { x: number; y: number }) {
         const { width, height } = this.element.startSize;
         const deltaZoom = this.normalizedZoom - this.prevZoom;
         const requestedShift = {

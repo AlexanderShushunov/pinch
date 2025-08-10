@@ -14,11 +14,7 @@ export class RawPinchDetector implements Disposable {
     private readonly startPointers: PointerEvent[] = [];
     private readonly disableAfterUp = new ResettableFlag(100);
 
-    public constructor(params: {
-        element: HTMLElement;
-        onStart: () => void;
-        onPinch: () => void;
-    }) {
+    public constructor(params: { element: HTMLElement; onStart: () => void; onPinch: () => void }) {
         this.element = params.element;
         this.onStart = params.onStart;
         this.onPinch = params.onPinch;
@@ -44,7 +40,7 @@ export class RawPinchDetector implements Disposable {
         return this.activePointers.length >= 2;
     }
 
-    public get center(): { x: number; y: number; } {
+    public get center(): { x: number; y: number } {
         if (!this.isPinch) {
             return { x: 0, y: 0 };
         }
@@ -65,7 +61,7 @@ export class RawPinchDetector implements Disposable {
         return Math.hypot(first.pageX - second.pageX, first.pageY - second.pageY);
     }
 
-    public get shift(): { x: number; y: number; } {
+    public get shift(): { x: number; y: number } {
         if (!this.isPinch) {
             return { x: 0, y: 0 };
         }

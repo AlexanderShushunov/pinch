@@ -1,11 +1,11 @@
 type TransformData = {
     zoom: number;
-    translate: { x: number; y: number; };
+    translate: { x: number; y: number };
     withTransition: boolean;
 };
 
 export class PinchedElementWrapper {
-    private readonly _startSize: { width: number; height: number; };
+    private readonly _startSize: { width: number; height: number };
     private readonly element: HTMLElement;
     private readonly moveTime: number;
     private isTransformRequested = false;
@@ -15,10 +15,7 @@ export class PinchedElementWrapper {
         withTransition: false,
     };
 
-    public constructor(
-        element: HTMLElement,
-        moveTime: number,
-    ) {
+    public constructor(element: HTMLElement, moveTime: number) {
         this.moveTime = moveTime;
         this.element = element;
         // we do not remove this styles, but it is ok
@@ -28,7 +25,7 @@ export class PinchedElementWrapper {
         this._startSize = { width: rect.width, height: rect.height };
     }
 
-    public get startSize(): { width: number; height: number; } {
+    public get startSize(): { width: number; height: number } {
         return this._startSize;
     }
 
