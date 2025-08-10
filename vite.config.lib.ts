@@ -7,6 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
     build: {
         outDir: "lib",
+        emptyOutDir: false,
         lib: {
             entry: resolve(__dirname, "src/Pinchable/index.ts"),
             name: "pinchable",
