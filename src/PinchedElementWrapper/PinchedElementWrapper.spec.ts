@@ -62,7 +62,6 @@ describe("PinchedElementWrapper", () => {
     });
 
     test("should set correct initial styles on element", () => {
-        // eslint-disable-next-line no-new
         new PinchedElementWrapper(element, 300);
 
         expect(element.style.position).toBe("relative");
