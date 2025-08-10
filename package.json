@@ -3,6 +3,17 @@
     "version": "0.0.0",
     "type": "module",
     "license": "MIT",
+    "main": "./lib/pinchable.umd.cjs",
+    "module": "./lib/pinchable.js",
+    "types": "./lib/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "import": "./lib/pinchable.js",
+            "require": "./lib/pinchable.umd.cjs",
+            "default": "./lib/pinchable.js"
+        }
+    },
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
