@@ -22,5 +22,5 @@ jobs:
         name: Lint
       - run: npm run typecheck
         name: Type check
-      - run: npm test
+      - run: npm test -- --run
         name: Test
