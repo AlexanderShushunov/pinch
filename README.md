@@ -23,15 +23,15 @@ import { Pinchable } from "./src/Pinchable";
 const container = document.getElementById("photo") as HTMLElement;
 
 const pinchable = new Pinchable(container, {
-  maxZoom: 3,        // maximum zoom scale
-  velocity: 0.7,     // pinch sensitivity
-  applyTime: 400     // ms transition when programmatically focusing
+    maxZoom: 3, // maximum zoom scale
+    velocity: 0.7, // pinch sensitivity
+    applyTime: 400, // ms transition when programmatically focusing
 });
 
 // Programmatically zoom to a point
 pinchable.focus({
-  zoom: 2,
-  to: { x: 0.5, y: 0.5 } // relative coordinates inside the element
+    zoom: 2,
+    to: { x: 0.5, y: 0.5 }, // relative coordinates inside the element
 });
 
 // Disable/enable gestures
@@ -50,4 +50,3 @@ pinchable.dispose();
 ## Notes
 
 This is a personal pet project; APIs may change. Feedback and contributions are welcome!
-

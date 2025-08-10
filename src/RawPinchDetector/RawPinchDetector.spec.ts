@@ -96,9 +96,7 @@ describe("RawPinchDetector", () => {
                     When they pinch with the other hand,
                     the detector should handle only second hand pinching`, () => {
         beforeEach(async () => {
-            await asyncPointer([
-                { keys: "[TouchA>]", target: element, coords: { pageX: 500, pageY: 500 } },
-            ]);
+            await asyncPointer([{ keys: "[TouchA>]", target: element, coords: { pageX: 500, pageY: 500 } }]);
         });
 
         test("should invoke onStart callback when user touches screen with thread fingers", async () => {
@@ -135,15 +133,11 @@ describe("RawPinchDetector", () => {
                     { keys: "[TouchC>]", target: element, coords: { pageX: 80, pageY: 80 } },
                     { pointerName: "TouchC", target: element, coords: { pageX: 90, pageY: 90 } },
                 ]);
-                await asyncPointer([
-                    { keys: "[/TouchC]" },
-                ]);
+                await asyncPointer([{ keys: "[/TouchC]" }]);
 
                 onPinch.mockClear();
 
-                await asyncPointer([
-                    { pointerName: "TouchB", target: element, coords: { pageX: 20, pageY: 20 } },
-                ]);
+                await asyncPointer([{ pointerName: "TouchB", target: element, coords: { pageX: 20, pageY: 20 } }]);
 
                 expect(onPinch).not.toHaveBeenCalled();
             });
@@ -154,16 +148,12 @@ describe("RawPinchDetector", () => {
                     { keys: "[TouchC>]", target: element, coords: { pageX: 80, pageY: 80 } },
                     { pointerName: "TouchC", target: element, coords: { pageX: 90, pageY: 90 } },
                 ]);
-                await asyncPointer([
-                    { keys: "[/TouchC]" },
-                ]);
+                await asyncPointer([{ keys: "[/TouchC]" }]);
 
                 onPinch.mockClear();
                 await vi.advanceTimersByTimeAsync(100);
 
-                await asyncPointer([
-                    { pointerName: "TouchB", target: element, coords: { pageX: 20, pageY: 20 } },
-                ]);
+                await asyncPointer([{ pointerName: "TouchB", target: element, coords: { pageX: 20, pageY: 20 } }]);
 
                 expect(onPinch).toHaveBeenCalledTimes(1);
             });
@@ -174,11 +164,11 @@ describe("RawPinchDetector", () => {
         test("should clean up event listeners on dispose", () => {
             const addListenerSpy = vi.spyOn(element, "addEventListener");
             const removeListenerSpy = vi.spyOn(element, "removeEventListener");
-            (new RawPinchDetector({
+            new RawPinchDetector({
                 element: element,
                 onStart: onStart,
                 onPinch: onPinch,
-            })).dispose();
+            }).dispose();
             expect(addListenerSpy.mock.calls).toEqual(removeListenerSpy.mock.calls);
             addListenerSpy.mockRestore();
             removeListenerSpy.mockRestore();
@@ -189,9 +179,7 @@ describe("RawPinchDetector", () => {
                 { keys: "[TouchB>]", target: element, coords: { pageX: 40, pageY: 40 } },
                 { keys: "[TouchC>]", target: element, coords: { pageX: 80, pageY: 80 } },
             ]);
-            await asyncPointer([
-                { keys: "[/TouchC]" },
-            ]);
+            await asyncPointer([{ keys: "[/TouchC]" }]);
             expect(vi.getTimerCount()).toBe(1);
             detector.dispose();
             expect(vi.getTimerCount()).toBe(0);

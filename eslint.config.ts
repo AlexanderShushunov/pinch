@@ -4,7 +4,7 @@ import tseslint from "typescript-eslint";
 import css from "@eslint/css";
 
 export default tseslint.config([
-    { ignores: ['dist'] },
+    { ignores: ["dist"] },
     {
         files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
         plugins: { js },
@@ -18,7 +18,7 @@ export default tseslint.config([
         language: "css/css",
         extends: [css.configs.recommended],
         rules: {
-            "css/use-baseline": [ "error", {"available": "newly" }],
+            "css/use-baseline": ["error", { available: "newly" }],
         },
     },
 ]);

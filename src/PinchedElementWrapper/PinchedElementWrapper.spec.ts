@@ -9,7 +9,8 @@ async function waitNextAnimationFrame() {
 }
 
 function parseTransformMatrix(matrix: string) {
-    const regex = /matrix\((?<scaleX>[0-9.-]+),\s*[0-9.-]+,\s*[0-9.-]+,\s*(?<scaleY>[0-9.-]+),\s*(?<translateX>[0-9.-]+),\s*(?<translateY>[0-9.-]+)\)/;
+    const regex =
+        /matrix\((?<scaleX>[0-9.-]+),\s*[0-9.-]+,\s*[0-9.-]+,\s*(?<scaleY>[0-9.-]+),\s*(?<translateX>[0-9.-]+),\s*(?<translateY>[0-9.-]+)\)/;
     const matches = matrix.match(regex);
 
     if (!matches || !matches.groups) {
@@ -39,7 +40,7 @@ describe("PinchedElementWrapper", () => {
                     left: 0,
                     right: 100,
                     bottom: 200,
-                } as DOMRect),
+                }) as DOMRect,
         );
         document.body.appendChild(element);
     });
