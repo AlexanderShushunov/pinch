@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
+        "build-lib": "vite build --config vite.config.lib.ts && rm -f lib/*.css && tsc -p tsconfig.lib-types.json",
         "preview": "vite preview",
         "test": "vitest",
         "typecheck": "tsc --noEmit",
