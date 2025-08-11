@@ -9,7 +9,7 @@ describe("ResettableFlag", () => {
         await vi.runAllTimersAsync();
     });
 
-    test("should have value=true by default", () => {
+    test("should have value=false by default", () => {
         const flag = new ResettableFlag();
         expect(flag.value).toBe(false);
     });
