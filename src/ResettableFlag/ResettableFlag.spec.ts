@@ -60,4 +60,15 @@ describe("ResettableFlag", () => {
 
         expect(vi.getTimerCount()).toBe(0);
     });
+
+    test("should leave value false when disposed", () => {
+        const flag = new ResettableFlag();
+
+        flag.reset();
+        expect(flag.value).toBe(true);
+
+        flag.dispose();
+
+        expect(flag.value).toBe(false);
+    });
 });
