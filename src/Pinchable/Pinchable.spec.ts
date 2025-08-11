@@ -54,6 +54,7 @@ describe("Pinch", () => {
                         return startSize;
                     },
                     transform: vi.fn(),
+                    dispose: vi.fn(),
                 }) as unknown as PinchedElementWrapper,
         );
     });
@@ -685,11 +686,12 @@ describe("Pinch", () => {
         });
     });
 
-    test("should dispose RawPinchDetector on dispose", () => {
+    test("should dispose PinchedElementWrapper and RawPinchDetector on dispose", () => {
         const { pinchable } = createPinch();
         pinchable.dispose();
 
         expect(getRawDetectorInstance().dispose).toHaveBeenCalled();
+        expect(getPinchedElementWrapperInstance().dispose).toHaveBeenCalled();
     });
 
     test("should dispose after apply daily", () => {
