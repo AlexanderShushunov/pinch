@@ -610,6 +610,19 @@ describe("Pinch", () => {
                 y: -400,
             });
         });
+
+        test("should clamp focus coordinates to element bounds", () => {
+            const { pinchable } = createPinch();
+            pinchable.focus({
+                zoom: 2,
+                to: { x: -0.5, y: 1.5 },
+            });
+            expect(getLastTransform()).toEqual({
+                zoom: 2,
+                translate: { x: 0, y: -200 },
+                withTransition: true,
+            });
+        });
     });
 
     test("should not allow manual pinch when disabled", () => {

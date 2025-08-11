@@ -10,7 +10,7 @@ Interactive demo: https://pinch-six.vercel.app/
 
 - Smooth pinch-zoom with the touch center anchored.
 - Panning with edge clamping and subtle thresholding for a natural feel.
-- Programmatic `focus()` to zoom to a specific point.
+- Programmatic `focus()` to zoom to a specific point using normalized `[0..1]` coordinates.
 - `setEnabled()` to toggle gestures on the fly.
 - Clean `dispose()` teardown.
 - Works with any DOM element.
@@ -31,7 +31,7 @@ const pinchable = new Pinchable(container, {
 // Programmatically zoom to a point
 pinchable.focus({
     zoom: 2,
-    to: { x: 0.5, y: 0.5 }, // relative coordinates inside the element
+    to: { x: 0.5, y: 0.5 }, // values between 0 and 1 (others will be clamped)
 });
 
 // Disable/enable gestures
@@ -41,6 +41,8 @@ pinchable.setEnabled(true);
 // Clean up when done
 pinchable.dispose();
 ```
+
+`focus()` expects the `to` coordinates to be normalized between `0` and `1` relative to the element size; values outside this range are clamped.
 
 ## Compatibility
 
