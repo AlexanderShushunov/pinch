@@ -57,6 +57,15 @@ export class Pinchable implements Disposable {
         this.startPinchingCallbacks = [];
     }
 
+    /**
+     * Programmatically zoom the element to a specific point.
+     *
+     * @param zoom Optional zoom level to apply.
+     * @param to   Target point inside the element. `to.x` and `to.y`
+     *             should be normalized between `0` and `1`, representing
+     *             a position relative to the element's width and height.
+     *             Values outside this range will be clamped.
+     */
     public focus({ zoom, to }: { zoom?: number; to: { x: number; y: number } }): void {
         this.disableAfterApply.reset();
         if (zoom !== undefined) {
@@ -65,9 +74,14 @@ export class Pinchable implements Disposable {
 
         const { width, height } = this.element.startSize;
 
+        const normalizedTo = {
+            x: clamp(to.x, 0, 1),
+            y: clamp(to.y, 0, 1),
+        };
+
         const centerShift = {
-            x: width / 2 - to.x * width * this.normalizedZoom,
-            y: height / 2 - to.y * height * this.normalizedZoom,
+            x: width / 2 - normalizedTo.x * width * this.normalizedZoom,
+            y: height / 2 - normalizedTo.y * height * this.normalizedZoom,
         };
 
         this.shift = {
