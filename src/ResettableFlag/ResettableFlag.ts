@@ -29,5 +29,6 @@ export class ResettableFlag implements Disposable {
         if (this.resetTimeout !== null) {
             window.clearTimeout(this.resetTimeout);
         }
+        this._value = false;
     }
 }
