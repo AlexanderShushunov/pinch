@@ -8,6 +8,11 @@ export class PinchedElementWrapper {
     private readonly _startSize: { width: number; height: number };
     private readonly element: HTMLElement;
     private readonly moveTime: number;
+    private readonly initialStyles: {
+        transformOrigin: string;
+        transform: string;
+        transition: string;
+    };
     private isTransformRequested = false;
     private transformData: TransformData = {
         zoom: 1,
@@ -18,8 +23,11 @@ export class PinchedElementWrapper {
     public constructor(element: HTMLElement, moveTime: number) {
         this.moveTime = moveTime;
         this.element = element;
-        // we do not remove this styles, but it is ok
-        element.style.position = "relative";
+        this.initialStyles = {
+            transformOrigin: element.style.transformOrigin,
+            transform: element.style.transform,
+            transition: element.style.transition,
+        };
         element.style.transformOrigin = "top left";
         const rect = element.getBoundingClientRect();
         this._startSize = { width: rect.width, height: rect.height };
@@ -45,5 +53,11 @@ export class PinchedElementWrapper {
             }
             this.isTransformRequested = false;
         });
+    }
+
+    public dispose(): void {
+        this.element.style.transformOrigin = this.initialStyles.transformOrigin;
+        this.element.style.transform = this.initialStyles.transform;
+        this.element.style.transition = this.initialStyles.transition;
     }
 }

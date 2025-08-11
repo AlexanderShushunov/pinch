@@ -54,6 +54,7 @@ export class Pinchable implements Disposable {
     public dispose(): void {
         this.rawPinchDetector.dispose();
         this.disableAfterApply.dispose();
+        this.element.dispose();
         this.startPinchingCallbacks.clear();
     }
 

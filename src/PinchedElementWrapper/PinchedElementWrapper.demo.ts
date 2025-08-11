@@ -27,6 +27,7 @@ function initPinchedElementWrapperDemo() {
 
     moveTimeInput.addEventListener("change", () => {
         moveTime = parseInt(moveTimeInput.value, 10);
+        pinchedElementWrapper.dispose();
         pinchedElementWrapper = new PinchedElementWrapper(element, moveTime);
     });
 
