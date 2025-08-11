@@ -21,7 +21,7 @@ export class Pinchable implements Disposable {
     private element: PinchedElementWrapper;
     private disableAfterApply: ResettableFlag;
     private enabled = true;
-    private startPinchingCallbacks: Array<() => void> = [];
+    private startPinchingCallbacks = new Set<() => void>();
     // change one per pinch
     private center = { x: 0, y: 0 };
     private prevZoom = 1;
@@ -54,7 +54,7 @@ export class Pinchable implements Disposable {
     public dispose(): void {
         this.rawPinchDetector.dispose();
         this.disableAfterApply.dispose();
-        this.startPinchingCallbacks = [];
+        this.startPinchingCallbacks.clear();
     }
 
     public focus({ zoom, to }: { zoom?: number; to: { x: number; y: number } }): void {
@@ -87,12 +87,9 @@ export class Pinchable implements Disposable {
     }
 
     public subscribeToStartPinching(callback: () => void): () => void {
-        this.startPinchingCallbacks.push(callback);
+        this.startPinchingCallbacks.add(callback);
         return () => {
-            const index = this.startPinchingCallbacks.indexOf(callback);
-            if (index !== -1) {
-                this.startPinchingCallbacks.splice(index, 1);
-            }
+            this.startPinchingCallbacks.delete(callback);
         };
     }
 
@@ -108,7 +105,9 @@ export class Pinchable implements Disposable {
             x: (center.x - this.shift.x) / this.zoom,
             y: (center.y - this.shift.y) / this.zoom,
         };
-        this.startPinchingCallbacks.forEach((callback) => callback());
+        this.startPinchingCallbacks.forEach((callback) => {
+            callback();
+        });
     };
 
     private handlePinch = () => {
