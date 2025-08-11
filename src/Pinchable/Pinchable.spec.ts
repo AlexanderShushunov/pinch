@@ -625,6 +625,40 @@ describe("Pinch", () => {
         });
     });
 
+    describe("subscribeToStartPinching", () => {
+        test("calls callback on start", () => {
+            const { pinchable, start } = createPinch();
+            const cb = vi.fn();
+            pinchable.subscribeToStartPinching(cb);
+            start({ center: { x: 40, y: 40 }, distance: 50 });
+            expect(cb).toHaveBeenCalledTimes(1);
+            start({ center: { x: 60, y: 60 }, distance: 70 });
+            expect(cb).toHaveBeenCalledTimes(2);
+        });
+
+        test("unsubscribe removes callback", () => {
+            const { pinchable, start } = createPinch();
+            const cb = vi.fn();
+            const unsubscribe = pinchable.subscribeToStartPinching(cb);
+            start({ center: { x: 40, y: 40 }, distance: 50 });
+            expect(cb).toHaveBeenCalledTimes(1);
+            unsubscribe();
+            start({ center: { x: 80, y: 80 }, distance: 90 });
+            expect(cb).toHaveBeenCalledTimes(1);
+        });
+
+        test("dispose removes callback", () => {
+            const { pinchable, start } = createPinch();
+            const cb = vi.fn();
+            pinchable.subscribeToStartPinching(cb);
+            start({ center: { x: 40, y: 40 }, distance: 50 });
+            expect(cb).toHaveBeenCalledTimes(1);
+            pinchable.dispose();
+            start({ center: { x: 80, y: 80 }, distance: 90 });
+            expect(cb).toHaveBeenCalledTimes(1);
+        });
+    });
+
     test("should not allow manual pinch when disabled", () => {
         const { pinchable, ...pinch } = createPinch();
         pinch.start({
