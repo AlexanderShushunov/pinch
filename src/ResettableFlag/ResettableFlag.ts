@@ -1,5 +1,9 @@
 import type { Disposable } from "../Disposable";
 
+/**
+ * Boolean flag that becomes `true` when {@link reset} is invoked and
+ * automatically reverts to `false` after the configured timeout.
+ */
 export class ResettableFlag implements Disposable {
     private _value = false;
     private resetTimeout: number | null = null;
@@ -13,15 +17,18 @@ export class ResettableFlag implements Disposable {
         return this._value;
     }
 
+    /**
+     * Sets the flag `true` for the reset window, then back to `false`.
+     */
     public reset(): void {
-        this._value = true;
+        this._value = true; // begin reset window
 
         if (this.resetTimeout !== null) {
             window.clearTimeout(this.resetTimeout);
         }
 
         this.resetTimeout = window.setTimeout(() => {
-            this._value = false;
+            this._value = false; // end reset window
         }, this.resetDuration);
     }
 
