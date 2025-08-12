@@ -3,6 +3,11 @@
     "version": "0.0.0",
     "type": "module",
     "license": "MIT",
+    "files": [
+        "lib/**/*",
+        "README.md",
+        "LICENSE"
+    ],
     "main": "./lib/pinchable.umd.cjs",
     "module": "./lib/pinchable.js",
     "types": "./lib/index.d.ts",
