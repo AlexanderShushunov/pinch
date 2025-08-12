@@ -36,6 +36,47 @@ describe("RawPinchDetector", () => {
         await eventResult;
     }
 
+    test("should set required styles on element", () => {
+        expect(element.style.touchAction).toBe("none");
+        expect(element.style.position).toBe("relative");
+    });
+
+    test("should restore styles on dispose", () => {
+        detector.dispose();
+        expect(element.style.touchAction).toBe("");
+        expect(element.style.position).toBe("");
+    });
+
+    test("should restore custom touch-action style", () => {
+        const custom = document.createElement("div");
+        custom.style.touchAction = "pan-x";
+        document.body.appendChild(custom);
+        const localDetector = new RawPinchDetector({
+            element: custom,
+            onStart: vi.fn(),
+            onPinch: vi.fn(),
+        });
+        expect(custom.style.touchAction).toBe("none");
+        localDetector.dispose();
+        expect(custom.style.touchAction).toBe("pan-x");
+        document.body.removeChild(custom);
+    });
+
+    test("should restore existing position style", () => {
+        const custom = document.createElement("div");
+        custom.style.position = "absolute";
+        document.body.appendChild(custom);
+        const localDetector = new RawPinchDetector({
+            element: custom,
+            onStart: vi.fn(),
+            onPinch: vi.fn(),
+        });
+        expect(custom.style.position).toBe("absolute");
+        localDetector.dispose();
+        expect(custom.style.position).toBe("absolute");
+        document.body.removeChild(custom);
+    });
+
     test("should invoke onStart callback when user touches screen with two fingers", async () => {
         await asyncPointer([
             { keys: "[TouchA>]", target: element, coords: { pageX: 100, pageY: 200 } },
