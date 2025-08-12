@@ -1,5 +1,6 @@
 {
     "name": "react-demo",
+    "description": "A React demo application using pinchable for pinch gestures.",
     "private": true,
     "version": "0.0.0",
     "type": "module",

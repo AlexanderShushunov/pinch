@@ -3,12 +3,12 @@ import { Pinchable } from "pinchable";
 import "./App.css";
 
 const images = [
-    "https://picsum.photos/id/1015/600/400",
-    "https://picsum.photos/id/1016/600/400",
-    "https://picsum.photos/id/1024/600/400",
-    "https://picsum.photos/id/1025/600/400",
-    "https://picsum.photos/id/1035/600/400",
-    "https://picsum.photos/id/1041/600/400",
+    "https://picsum.photos/id/1015/400/600",
+    "https://picsum.photos/id/1016/400/600",
+    "https://picsum.photos/id/1024/400/600",
+    "https://picsum.photos/id/1025/400/600",
+    "https://picsum.photos/id/1035/400/600",
+    "https://picsum.photos/id/1041/400/600",
 ];
 
 function App() {
@@ -28,6 +28,10 @@ function App() {
 
     return (
         <div>
+            <h1>Click and pinch</h1>
+            <span>
+                Example for <a href="https://github.com/AlexanderShushunov/pinch">pinchable</a> lib
+            </span>
             <div className="gallery">
                 {images.map((src, i) => (
                     <img key={i} src={src} className="thumb" onClick={() => setActive(i)} alt={`Preview ${i + 1}`} />
