@@ -17,13 +17,13 @@ Interactive demo: https://pinch-six.vercel.app/
 
 ## Usage
 
-## Installation
-
 You can install Pinchable via npm:
 
 ```bash
 npm install --save pinchable
 ```
+
+Use it in your JavaScript or TypeScript project like this:
 
 ```ts
 import { Pinchable } from "pinchable";
