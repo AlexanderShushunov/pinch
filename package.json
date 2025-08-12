@@ -1,11 +1,28 @@
 {
     "name": "pinchable",
-    "version": "0.0.0",
+    "version": "0.0.3",
     "type": "module",
     "license": "MIT",
+    "files": [
+        "lib/**/*",
+        "README.md",
+        "LICENSE"
+    ],
+    "main": "./lib/index.umd.cjs",
+    "module": "./lib/index.js",
+    "types": "./lib/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "import": "./lib/index.js",
+            "require": "./lib/index.umd.cjs",
+            "default": "./lib/index.js"
+        }
+    },
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
+        "build-lib": "vite build --config vite.config.lib.ts && rm -f lib/*.css && tsc -p tsconfig.lib-types.json",
         "preview": "vite preview",
         "test": "vitest",
         "typecheck": "tsc --noEmit",

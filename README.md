@@ -17,8 +17,16 @@ Interactive demo: https://pinch-six.vercel.app/
 
 ## Usage
 
+## Installation
+
+You can install Pinchable via npm:
+
+```bash
+npm install --save pinchable
+```
+
 ```ts
-import { Pinchable } from "./src/Pinchable";
+import { Pinchable } from "pinchable";
 
 const container = document.getElementById("photo") as HTMLElement;
 
