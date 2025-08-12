@@ -4,7 +4,7 @@ import tseslint from "typescript-eslint";
 import css from "@eslint/css";
 
 export default tseslint.config([
-    { ignores: ["dist"] },
+    { ignores: ["dist", "lib", "react-demo"] },
     {
         files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
         plugins: { js },
