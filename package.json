@@ -8,15 +8,15 @@
         "README.md",
         "LICENSE"
     ],
-    "main": "./lib/pinchable.umd.cjs",
-    "module": "./lib/pinchable.js",
+    "main": "./lib/index.umd.cjs",
+    "module": "./lib/index.js",
     "types": "./lib/index.d.ts",
     "exports": {
         ".": {
             "types": "./lib/index.d.ts",
-            "import": "./lib/pinchable.js",
-            "require": "./lib/pinchable.umd.cjs",
-            "default": "./lib/pinchable.js"
+            "import": "./lib/index.js",
+            "require": "./lib/index.umd.cjs",
+            "default": "./lib/index.js"
         }
     },
     "scripts": {

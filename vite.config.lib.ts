@@ -8,9 +8,9 @@ export default defineConfig({
     build: {
         outDir: "lib",
         lib: {
-            entry: resolve(__dirname, "src/Pinchable/index.ts"),
-            name: "pinchable",
-            fileName: "pinchable",
+            entry: resolve(__dirname, "src/index.ts"),
+            name: "index",
+            fileName: "index",
         },
     },
 });
