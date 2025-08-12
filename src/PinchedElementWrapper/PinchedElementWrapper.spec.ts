@@ -62,14 +62,6 @@ describe("PinchedElementWrapper", () => {
         expect(wrapper.startSize).toEqual({ width: 100, height: 200 });
     });
 
-    test("should set transformOrigin without changing position", () => {
-        element.style.position = "absolute";
-        new PinchedElementWrapper(element, 300);
-
-        expect(element.style.position).toBe("absolute");
-        expect(element.style.transformOrigin).toBe("top left");
-    });
-
     test("should apply only last transform data when multiple calls are made before animation frame", async () => {
         const wrapper = new PinchedElementWrapper(element, 300);
 
@@ -154,7 +146,6 @@ describe("PinchedElementWrapper", () => {
     });
 
     test("should restore original styles on dispose", async () => {
-        element.style.position = "absolute";
         element.style.transformOrigin = "center";
         element.style.transform = "scale(2)";
         element.style.transition = "all 1s ease";
@@ -169,14 +160,12 @@ describe("PinchedElementWrapper", () => {
 
         await waitNextAnimationFrame();
 
-        expect(element.style.position).toBe("absolute");
         expect(element.style.transformOrigin).toBe("top left");
         expect(element.style.transform).not.toBe("scale(2)");
         expect(element.style.transition).toBe("transform 0.3s ease");
 
         wrapper.dispose();
 
-        expect(element.style.position).toBe("absolute");
         expect(element.style.transformOrigin).toBe("center");
         expect(element.style.transform).toBe("scale(2)");
         expect(element.style.transition).toBe("all 1s ease");

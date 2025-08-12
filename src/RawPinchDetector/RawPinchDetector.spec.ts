@@ -36,6 +36,25 @@ describe("RawPinchDetector", () => {
         await eventResult;
     }
 
+    test("should set required styles on element", () => {
+        expect(element.style.touchAction).toBe("none");
+    });
+
+    test("should restore custom touch-action style", () => {
+        const custom = document.createElement("div");
+        custom.style.touchAction = "pan-x";
+        document.body.appendChild(custom);
+        const localDetector = new RawPinchDetector({
+            element: custom,
+            onStart: vi.fn(),
+            onPinch: vi.fn(),
+        });
+        expect(custom.style.touchAction).toBe("none");
+        localDetector.dispose();
+        expect(custom.style.touchAction).toBe("pan-x");
+        document.body.removeChild(custom);
+    });
+
     test("should invoke onStart callback when user touches screen with two fingers", async () => {
         await asyncPointer([
             { keys: "[TouchA>]", target: element, coords: { pageX: 100, pageY: 200 } },
