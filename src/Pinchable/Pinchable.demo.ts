@@ -2,7 +2,7 @@ import { Pinchable } from "./Pinchable.ts";
 
 function createFillCanvas(container: HTMLElement): HTMLCanvasElement {
     const canvas = document.createElement("canvas");
-    canvas.style.position = "absolute";
+    canvas.style.position = "relative";
     canvas.style.top = "0";
     canvas.style.left = "0";
     canvas.style.pointerEvents = "none";

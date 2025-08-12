@@ -15,7 +15,6 @@ export class RawPinchDetector implements Disposable {
     private readonly disableAfterUp = new ResettableFlag(100);
     private readonly initialStyles: {
         touchAction: string;
-        position: string;
     };
 
     public constructor(params: { element: HTMLElement; onStart: () => void; onPinch: () => void }) {
@@ -25,14 +24,8 @@ export class RawPinchDetector implements Disposable {
 
         this.initialStyles = {
             touchAction: this.element.style.touchAction,
-            position: this.element.style.position,
         };
         this.element.style.touchAction = "none";
-        // Provide a stable positioning context if none exists so wrappers that
-        // rely on absolute children (e.g., PinchedElementWrapper) behave as expected.
-        if (!this.element.style.position) {
-            this.element.style.position = "relative";
-        }
 
         this.element.addEventListener("pointerdown", this.handleDown);
         this.element.addEventListener("pointermove", this.handleMove);
@@ -50,8 +43,7 @@ export class RawPinchDetector implements Disposable {
         this.element.removeEventListener("pointerout", this.handleUp);
         this.element.removeEventListener("pointerleave", this.handleUp);
         this.disableAfterUp.dispose();
-        this.element.style.touchAction = this.initialStyles.touchAction || "";
-        this.element.style.position = this.initialStyles.position;
+        this.element.style.touchAction = this.initialStyles.touchAction;
     }
 
     public get isPinch(): boolean {

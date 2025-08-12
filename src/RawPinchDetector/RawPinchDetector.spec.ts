@@ -38,13 +38,6 @@ describe("RawPinchDetector", () => {
 
     test("should set required styles on element", () => {
         expect(element.style.touchAction).toBe("none");
-        expect(element.style.position).toBe("relative");
-    });
-
-    test("should restore styles on dispose", () => {
-        detector.dispose();
-        expect(element.style.touchAction).toBe("");
-        expect(element.style.position).toBe("");
     });
 
     test("should restore custom touch-action style", () => {
@@ -59,21 +52,6 @@ describe("RawPinchDetector", () => {
         expect(custom.style.touchAction).toBe("none");
         localDetector.dispose();
         expect(custom.style.touchAction).toBe("pan-x");
-        document.body.removeChild(custom);
-    });
-
-    test("should restore existing position style", () => {
-        const custom = document.createElement("div");
-        custom.style.position = "absolute";
-        document.body.appendChild(custom);
-        const localDetector = new RawPinchDetector({
-            element: custom,
-            onStart: vi.fn(),
-            onPinch: vi.fn(),
-        });
-        expect(custom.style.position).toBe("absolute");
-        localDetector.dispose();
-        expect(custom.style.position).toBe("absolute");
         document.body.removeChild(custom);
     });
 
