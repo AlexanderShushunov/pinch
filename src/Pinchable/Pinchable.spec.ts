@@ -206,6 +206,35 @@ describe("Pinch", () => {
             expect(getLastTransform().zoom).toEqual(1);
         });
 
+        test("zoom can be smaller then 1 with provided minZoom", () => {
+            const pinch = createPinch({ minZoom: 0.5 });
+            pinch.start({
+                center: { x: 40, y: 40 },
+                distance: 50,
+            });
+            pinch.move({
+                distance: 40,
+            });
+            expect(getLastTransform().zoom).toEqual(1);
+            pinch.move({
+                distance: 25,
+            });
+            const transform = getLastTransform();
+            expect(transform.zoom).toBeCloseTo(0.625);
+            expect(transform.translate).toEqual({
+                x: (startSize.width * (1 - transform.zoom)) / 2,
+                y: (startSize.height * (1 - transform.zoom)) / 2,
+            });
+            pinch.move({
+                distance: 5,
+            });
+            expect(getLastTransform()).toEqual({
+                zoom: 0.5,
+                translate: { x: 75, y: 50 },
+                withTransition: false,
+            });
+        });
+
         test("should change zoom with passed velocity", () => {
             const pinch = createPinch({ velocity: 0.5 });
             pinch.start({

@@ -13,6 +13,7 @@ function clamp(value: number, min: number, max: number): number {
 
 export class Pinchable implements Disposable {
     private readonly params: {
+        minZoom: number;
         maxZoom: number;
         velocity: number;
         applyTime: number;
@@ -37,11 +38,12 @@ export class Pinchable implements Disposable {
         element: HTMLElement,
         params: {
             maxZoom: number;
+            minZoom?: number;
             velocity: number;
             applyTime: number;
         },
     ) {
-        this.params = params;
+        this.params = { ...params, minZoom: params.minZoom ?? 1 };
         this.rawPinchDetector = new RawPinchDetector({
             element: element,
             onStart: this.handleStart,
@@ -132,7 +134,11 @@ export class Pinchable implements Disposable {
         const curDist = this.rawPinchDetector.distance;
         const curShift = this.rawPinchDetector.shift;
         this.zoom = this.calcThresholdZoom(curDist);
-        this.shift = this.calculateThresholdShift(curShift);
+        if (this.zoom <= 1) {
+            this.shift = { x: 0, y: 0 };
+        } else {
+            this.shift = this.calculateThresholdShift(curShift);
+        }
         this.element.transform({
             zoom: this.normalizedZoom,
             translate: this.normalizedShift,
@@ -142,22 +148,37 @@ export class Pinchable implements Disposable {
     };
 
     private get normalizedZoom() {
-        const { maxZoom } = this.params;
-        return clamp(this.zoom, 1, maxZoom);
+        const { maxZoom, minZoom } = this.params;
+        const clamped = clamp(this.zoom, minZoom, maxZoom);
+        if (clamped < 1 && clamped >= 1 - zoomThreshold) {
+            return 1;
+        }
+        return clamped;
     }
 
     private calcThresholdZoom(curDist: number) {
-        const { maxZoom, velocity } = this.params;
+        const { maxZoom, velocity, minZoom } = this.params;
         const candidate = (this.zoom * curDist) / (curDist + (this.prevDist - curDist) * velocity);
-        return clamp(candidate, 1 - zoomThreshold, maxZoom + zoomThreshold);
+        const clamped = clamp(candidate, minZoom - zoomThreshold, maxZoom + zoomThreshold);
+        if (clamped < 1 && clamped >= 1 - zoomThreshold) {
+            return 1;
+        }
+        return clamped;
     }
 
     private get normalizedShift() {
         const { height, width } = this.element.startSize;
+        const zoom = this.normalizedZoom;
+        if (zoom <= 1) {
+            return {
+                x: (width * (1 - zoom)) / 2,
+                y: (height * (1 - zoom)) / 2,
+            };
+        }
         const { x, y } = this.shift;
         return {
-            x: clamp(x, width * (1 - this.normalizedZoom), 0),
-            y: clamp(y, height * (1 - this.normalizedZoom), 0),
+            x: clamp(x, width * (1 - zoom), 0),
+            y: clamp(y, height * (1 - zoom), 0),
         };
     }
 
