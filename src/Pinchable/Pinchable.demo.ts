@@ -45,19 +45,48 @@ export function initPinchableDemo(): void {
     const container = document.getElementById("pinchContainer") as HTMLDivElement;
     const maxZoomInput = document.getElementById("maxZoom") as HTMLInputElement;
     const maxZoomValue = document.getElementById("maxZoomValue") as HTMLSpanElement;
+    const minZoomInput = document.getElementById("minZoom") as HTMLInputElement;
+    const minZoomValue = document.getElementById("minZoomValue") as HTMLSpanElement;
     const velocityInput = document.getElementById("velocity") as HTMLInputElement;
     const velocityValue = document.getElementById("velocityValue") as HTMLSpanElement;
     const applyTimeInput = document.getElementById("applyTime") as HTMLInputElement;
     const applyTimeValue = document.getElementById("applyTimeValue") as HTMLSpanElement;
+    const zoomThresholdInput = document.getElementById("zoomThreshold") as HTMLInputElement;
+    const zoomThresholdValue = document.getElementById("zoomThresholdValue") as HTMLSpanElement;
+    const shiftThresholdInput = document.getElementById("shiftThreshold") as HTMLInputElement;
+    const shiftThresholdValue = document.getElementById("shiftThresholdValue") as HTMLSpanElement;
     const resetButton = document.getElementById("resetButton") as HTMLButtonElement;
     const movePoint1 = document.getElementById("movePoint1") as HTMLButtonElement;
     const movePoint2 = document.getElementById("movePoint2") as HTMLButtonElement;
     const movePoint3 = document.getElementById("movePoint3") as HTMLButtonElement;
     const movePoint4 = document.getElementById("movePoint4") as HTMLButtonElement;
+    const zoomLessThanOne = document.getElementById("zoomLessThanOne") as HTMLButtonElement;
     const disableButton = document.getElementById("disableButton") as HTMLButtonElement;
     const enableButton = document.getElementById("enableButton") as HTMLButtonElement;
 
-    if (!container || !maxZoomInput || !velocityInput || !applyTimeInput || !resetButton) {
+    if (
+        !container ||
+        !maxZoomInput ||
+        !minZoomInput ||
+        !velocityInput ||
+        !applyTimeInput ||
+        !resetButton ||
+        !movePoint1 ||
+        !movePoint2 ||
+        !movePoint3 ||
+        !movePoint4 ||
+        !zoomLessThanOne ||
+        !disableButton ||
+        !enableButton ||
+        !maxZoomValue ||
+        !minZoomValue ||
+        !velocityValue ||
+        !applyTimeValue ||
+        !zoomThresholdInput ||
+        !zoomThresholdValue ||
+        !shiftThresholdInput ||
+        !shiftThresholdValue
+    ) {
         console.error("Required elements not found in the document.");
         return;
     }
@@ -72,27 +101,42 @@ export function initPinchableDemo(): void {
 
     // Initialize parameters
     let maxZoom = parseFloat(maxZoomInput.value);
+    let minZoom = parseFloat(minZoomInput.value);
     let velocity = parseFloat(velocityInput.value);
     let applyTime = parseInt(applyTimeInput.value, 10);
+    let zoomThreshold = parseFloat(zoomThresholdInput.value);
+    let shiftThreshold = parseInt(shiftThresholdInput.value, 10);
 
     // Create Pinchable instance
     let pinchable = new Pinchable(container, {
         maxZoom: maxZoom,
+        minZoom: minZoom,
         velocity: velocity,
         applyTime: applyTime,
+        zoomThreshold: zoomThreshold,
+        shiftThreshold: shiftThreshold,
     });
 
     // Update value displays
     function updateValueDisplays(): void {
         maxZoomValue.textContent = maxZoom.toString();
+        minZoomValue.textContent = minZoom.toString();
         velocityValue.textContent = velocity.toString();
         applyTimeValue.textContent = applyTime.toString();
+        zoomThresholdValue.textContent = zoomThreshold.toFixed(2);
+        shiftThresholdValue.textContent = shiftThreshold.toString();
     }
     updateValueDisplays();
 
     // Handle parameter changes
     maxZoomInput.addEventListener("input", () => {
         maxZoom = parseFloat(maxZoomInput.value);
+        updateValueDisplays();
+        reinitializePinchable();
+    });
+
+    minZoomInput.addEventListener("input", () => {
+        minZoom = parseFloat(minZoomInput.value);
         updateValueDisplays();
         reinitializePinchable();
     });
@@ -109,12 +153,27 @@ export function initPinchableDemo(): void {
         reinitializePinchable();
     });
 
+    zoomThresholdInput.addEventListener("input", () => {
+        zoomThreshold = parseFloat(zoomThresholdInput.value);
+        updateValueDisplays();
+        reinitializePinchable();
+    });
+
+    shiftThresholdInput.addEventListener("input", () => {
+        shiftThreshold = parseInt(shiftThresholdInput.value, 10);
+        updateValueDisplays();
+        reinitializePinchable();
+    });
+
     function reinitializePinchable(): void {
         pinchable.dispose();
         pinchable = new Pinchable(container, {
             maxZoom: maxZoom,
+            minZoom: minZoom,
             velocity: velocity,
             applyTime: applyTime,
+            zoomThreshold: zoomThreshold,
+            shiftThreshold: shiftThreshold,
         });
     }
 
@@ -151,6 +210,13 @@ export function initPinchableDemo(): void {
         pinchable.focus({
             zoom: 1.5,
             to: { x: 0.4, y: 0.7 },
+        });
+    });
+
+    zoomLessThanOne.addEventListener("click", () => {
+        pinchable.focus({
+            zoom: 0.8,
+            to: { x: 1, y: 1 },
         });
     });
 
