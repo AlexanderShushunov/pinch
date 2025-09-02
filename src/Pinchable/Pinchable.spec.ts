@@ -64,6 +64,9 @@ describe("Pinch", () => {
             maxZoom: 3,
             velocity: 1,
             applyTime: 300,
+            minZoom: 1,
+            zoomThreshold: 0.3,
+            shiftThreshold: 10,
         };
         const element = document.createElement("div");
         const pinchable = new Pinchable(element, { ...defaultParams, ...params });
@@ -107,7 +110,7 @@ describe("Pinch", () => {
                 distance: 50,
             });
             pinch.move({
-                distance: 100,
+                distance: 105,
             });
             expect(getLastTransform()).toEqual({
                 zoom: 2,
@@ -126,7 +129,7 @@ describe("Pinch", () => {
                 distance: 70,
             });
             pinch.move({
-                distance: 100,
+                distance: 105,
             });
             expect(getLastTransform()).toEqual({
                 zoom: 2,
@@ -161,7 +164,7 @@ describe("Pinch", () => {
                 distance: 50,
             });
             pinch.move({
-                distance: 75,
+                distance: 80,
             });
             pinch.start({
                 center: { x: 100, y: 20 },
@@ -206,6 +209,52 @@ describe("Pinch", () => {
             expect(getLastTransform().zoom).toEqual(1);
         });
 
+        test("should allow zooming out below 1 when minZoom is provided", () => {
+            const pinch = createPinch({ minZoom: 0.5 });
+            pinch.start({
+                center: { x: 40, y: 40 },
+                distance: 50,
+            });
+            pinch.move({
+                distance: 45,
+                shift: { x: 20, y: 20 },
+            });
+            expect(getLastTransform()).toEqual({
+                zoom: 1,
+                translate: { x: 0, y: 0 },
+                withTransition: false,
+            });
+            pinch.move({
+                distance: 20,
+                shift: { x: -50, y: -50 },
+            });
+            expect(getLastTransform()).toEqual({
+                zoom: 0.5,
+                translate: { x: 75, y: 50 },
+                withTransition: false,
+            });
+        });
+
+        test("should have a small 'trigger slack' near zoom 1", () => {
+            const pinch = createPinch({ minZoom: 0.5 });
+            pinch.start({
+                center: { x: 40, y: 40 },
+                distance: 50,
+            });
+            pinch.move({
+                distance: 55,
+            });
+            expect(getLastTransform().zoom).toBe(1);
+            pinch.move({
+                distance: 45,
+            });
+            expect(getLastTransform().zoom).toBe(1);
+            pinch.move({
+                distance: 40,
+            });
+            expect(getLastTransform().zoom).toBeCloseTo(0.9);
+        });
+
         test("should change zoom with passed velocity", () => {
             const pinch = createPinch({ velocity: 0.5 });
             pinch.start({
@@ -213,7 +262,7 @@ describe("Pinch", () => {
                 distance: 50,
             });
             pinch.move({
-                distance: 150,
+                distance: 200,
             });
 
             expect(getLastTransform().zoom).toEqual(1.5);
@@ -255,9 +304,9 @@ describe("Pinch", () => {
             });
             expect(getLastTransform().zoom).toEqual(2);
             pinch.move({
-                distance: 180, // it is much bigger than 100 = 2 (maxZoom) * 50 (start distance)
+                distance: 180, // it is much bigger than 105 = 2 (maxZoom) * 50 (start distance) + 5 (near one threshold)
             });
-            expect(getLastTransform().zoom).toEqual(1.98);
+            expect(getLastTransform().zoom).toBeCloseTo(1.97);
         });
 
         test("during zooming left/top position of element can be more 0", () => {
@@ -312,7 +361,7 @@ describe("Pinch", () => {
                 distance: 50,
             });
             pinch.move({
-                distance: 100,
+                distance: 105,
             });
             pinch.move({
                 shift: { x: 20, y: 20 },
@@ -331,7 +380,7 @@ describe("Pinch", () => {
                 distance: 50,
             });
             pinch.move({
-                distance: 100,
+                distance: 105,
             });
             pinch.move({
                 shift: { x: 20, y: -10 },
@@ -353,7 +402,7 @@ describe("Pinch", () => {
                 distance: 50,
             });
             pinch.move({
-                distance: 100,
+                distance: 105,
             });
             pinch.move({
                 shift: { x: 30, y: -30 },
@@ -375,7 +424,7 @@ describe("Pinch", () => {
                 distance: 50,
             });
             pinch.move({
-                distance: 100,
+                distance: 105,
             });
             pinch.move({
                 shift: { x: -15, y: 20 },
@@ -402,7 +451,7 @@ describe("Pinch", () => {
                 distance: 50,
             });
             pinch.move({
-                distance: 100,
+                distance: 105,
             });
             pinch.move({
                 shift: { x: 100, y: 100 },
@@ -500,14 +549,14 @@ describe("Pinch", () => {
             });
         });
 
-        test("should preserve focus if it is not provided", () => {
+        test("should preserve zoom focus if it is not provided", () => {
             const { pinchable, ...pinch } = createPinch();
             pinch.start({
                 center: { x: 40, y: 40 },
                 distance: 50,
             });
             pinch.move({
-                distance: 100,
+                distance: 105,
             });
             pinchable.focus({
                 to: {
@@ -529,7 +578,7 @@ describe("Pinch", () => {
                 distance: 50,
             });
             pinch.move({
-                distance: 100,
+                distance: 105,
             });
             pinchable.setEnabled(false);
             pinchable.focus({
@@ -552,7 +601,7 @@ describe("Pinch", () => {
                 distance: 50,
             });
             pinch.move({
-                distance: 100,
+                distance: 105,
             });
             pinchable.focus({
                 to: {
@@ -667,7 +716,7 @@ describe("Pinch", () => {
             distance: 50,
         });
         pinch.move({
-            distance: 100,
+            distance: 105,
         });
         expect(getLastTransform()).toEqual({
             zoom: 2,

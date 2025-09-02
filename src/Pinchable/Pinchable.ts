@@ -5,8 +5,8 @@ import type { Disposable } from "../Disposable";
 import { Notifier } from "../Notifier";
 
 const nonStart = -1;
-const zoomThreshold = 0.2;
-const shiftThreshold = 10;
+const defaultZoomThreshold = 0.2;
+const defaultShiftThreshold = 10;
 
 function clamp(value: number, min: number, max: number): number {
     return Math.max(min, Math.min(max, value));
@@ -15,6 +15,9 @@ function clamp(value: number, min: number, max: number): number {
 export class Pinchable implements Disposable {
     private readonly params: {
         maxZoom: number;
+        minZoom: number;
+        zoomThreshold: number;
+        shiftThreshold: number;
         velocity: number;
         applyTime: number;
     };
@@ -38,11 +41,19 @@ export class Pinchable implements Disposable {
         element: HTMLElement,
         params: {
             maxZoom: number;
+            minZoom?: number;
+            zoomThreshold?: number;
+            shiftThreshold?: number;
             velocity: number;
             applyTime: number;
         },
     ) {
-        this.params = params;
+        this.params = {
+            minZoom: 1,
+            zoomThreshold: defaultZoomThreshold,
+            shiftThreshold: defaultShiftThreshold,
+            ...params,
+        };
         this.rawPinchDetector = new RawPinchDetector({
             element: element,
             onStart: this.handleStart,
@@ -71,6 +82,7 @@ export class Pinchable implements Disposable {
     public focus({ zoom, to }: { zoom?: number; to: { x: number; y: number } }): void {
         this.disableAfterApply.reset();
         if (zoom !== undefined) {
+            this.prevZoom = zoom;
             this.zoom = zoom;
         }
 
@@ -109,7 +121,7 @@ export class Pinchable implements Disposable {
     private handleStart = () => {
         this.prevDist = this.rawPinchDetector.distance;
         this.zoom = this.normalizedZoom;
-        this.prevZoom = this.normalizedZoom;
+        this.prevZoom = this.zoom;
         this.shift = this.normalizedShift;
         this.prevShift = this.normalizedShift;
         this.removedPinchShift = { x: 0, y: 0 };
@@ -128,7 +140,11 @@ export class Pinchable implements Disposable {
         const curDist = this.rawPinchDetector.distance;
         const curShift = this.rawPinchDetector.shift;
         this.zoom = this.calcThresholdZoom(curDist);
-        this.shift = this.calculateThresholdShift(curShift);
+        if (this.zoom < 1) {
+            this.shift = { x: 0, y: 0 };
+        } else {
+            this.shift = this.calculateThresholdShift(curShift);
+        }
         this.element.transform({
             zoom: this.normalizedZoom,
             translate: this.normalizedShift,
@@ -138,19 +154,46 @@ export class Pinchable implements Disposable {
     };
 
     private get normalizedZoom() {
-        const { maxZoom } = this.params;
-        return clamp(this.zoom, 1, maxZoom);
+        const { maxZoom, minZoom } = this.params;
+        if (!this.isZoomCrossedOne) {
+            return clamp(this.zoom, minZoom, maxZoom);
+        }
+        if (this.isZoomNearOne) {
+            return 1;
+        }
+        if (this.zoom > 1) {
+            return clamp(this.zoom - this.nearZeroZoomThreshold, minZoom, maxZoom);
+        }
+        return clamp(this.zoom + this.nearZeroZoomThreshold, minZoom, maxZoom);
+    }
+
+    private get isZoomNearOne() {
+        return this.zoom > 1 - this.nearZeroZoomThreshold && this.zoom < 1 + this.nearZeroZoomThreshold;
+    }
+
+    private get isZoomCrossedOne() {
+        return (this.prevZoom <= 1 && this.zoom > 1) || (this.prevZoom >= 1 && this.zoom < 1);
+    }
+
+    private get nearZeroZoomThreshold() {
+        return this.params.zoomThreshold / 3;
     }
 
     private calcThresholdZoom(curDist: number) {
-        const { maxZoom, velocity } = this.params;
+        const { maxZoom, minZoom, velocity, zoomThreshold } = this.params;
         const candidate = (this.zoom * curDist) / (curDist + (this.prevDist - curDist) * velocity);
-        return clamp(candidate, 1 - zoomThreshold, maxZoom + zoomThreshold);
+        return clamp(candidate, minZoom - zoomThreshold, maxZoom + zoomThreshold);
     }
 
     private get normalizedShift() {
         const { height, width } = this.element.startSize;
         const { x, y } = this.shift;
+        if (this.normalizedZoom < 1) {
+            return {
+                x: (width * (1 - this.normalizedZoom)) / 2,
+                y: (height * (1 - this.normalizedZoom)) / 2,
+            };
+        }
         return {
             x: clamp(x, width * (1 - this.normalizedZoom), 0),
             y: clamp(y, height * (1 - this.normalizedZoom), 0),
@@ -158,6 +201,7 @@ export class Pinchable implements Disposable {
     }
 
     private calculateThresholdShift(pinchShift: { x: number; y: number }) {
+        const { shiftThreshold } = this.params;
         const { width, height } = this.element.startSize;
         const deltaZoom = this.normalizedZoom - this.prevZoom;
         const requestedShift = {

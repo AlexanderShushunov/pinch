@@ -32,6 +32,7 @@ const container = document.getElementById("photo") as HTMLElement;
 
 const pinchable = new Pinchable(container, {
     maxZoom: 3, // maximum zoom scale
+    minZoom: 0.5, // minimum zoom scale (1 = original size, default is 1)
     velocity: 0.7, // pinch sensitivity
     applyTime: 400, // ms transition when programmatically focusing
 });
@@ -50,7 +51,7 @@ pinchable.setEnabled(true);
 pinchable.dispose();
 ```
 
-`focus()` expects the `to` coordinates to be normalized between `0` and `1` relative to the element size; values outside this range are clamped.
+`minZoom` defaults to `1`, preventing zooming out beyond the original size. Set it lower to allow zooming out while keeping the element centered. `focus()` expects the `to` coordinates to be normalized between `0` and `1` relative to the element size; values outside this range are clamped.
 
 ## Compatibility
 
