@@ -2,6 +2,7 @@ import { PinchedElementWrapper } from "../PinchedElementWrapper";
 import { RawPinchDetector } from "../RawPinchDetector";
 import { ResettableFlag } from "../ResettableFlag";
 import type { Disposable } from "../Disposable";
+import { Notifier } from "../Notifier";
 
 const nonStart = -1;
 const zoomThreshold = 0.2;
@@ -21,7 +22,7 @@ export class Pinchable implements Disposable {
     private element: PinchedElementWrapper;
     private disableAfterApply: ResettableFlag;
     private enabled = true;
-    private startPinchingCallbacks = new Set<() => void>();
+    private startPinchingNotifier = new Notifier<[]>();
     // change one per pinch
     private center = { x: 0, y: 0 };
     private prevZoom = 1;
@@ -55,7 +56,7 @@ export class Pinchable implements Disposable {
         this.rawPinchDetector.dispose();
         this.disableAfterApply.dispose();
         this.element.dispose();
-        this.startPinchingCallbacks.clear();
+        this.startPinchingNotifier.dispose();
     }
 
     /**
@@ -102,10 +103,7 @@ export class Pinchable implements Disposable {
     }
 
     public subscribeToStartPinching(callback: () => void): () => void {
-        this.startPinchingCallbacks.add(callback);
-        return () => {
-            this.startPinchingCallbacks.delete(callback);
-        };
+        return this.startPinchingNotifier.subscribe(callback);
     }
 
     private handleStart = () => {
@@ -120,9 +118,7 @@ export class Pinchable implements Disposable {
             x: (center.x - this.shift.x) / this.zoom,
             y: (center.y - this.shift.y) / this.zoom,
         };
-        this.startPinchingCallbacks.forEach((callback) => {
-            callback();
-        });
+        this.startPinchingNotifier.emit();
     };
 
     private handlePinch = () => {
