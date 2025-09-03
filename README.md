@@ -6,6 +6,8 @@ Lightweight, dependency-free wrapper that adds mobile-friendly pinch-zoom and pa
 
 Interactive demo: https://pinch-six.vercel.app/
 
+React demo: https://pinch-react-demo.vercel.app/
+
 ## Features
 
 - Smooth pinch-zoom with the touch center anchored.
