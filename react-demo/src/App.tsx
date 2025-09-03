@@ -13,19 +13,37 @@ const images = [
 
 function App() {
     const [active, setActive] = useState<number | null>(null);
+    const [closing, setClosing] = useState(false);
     const imgRef = useRef<HTMLImageElement | null>(null);
+
+    const close = () => {
+        setClosing(true);
+    };
+
+    useEffect(() => {
+        if (closing) {
+            const timer = setTimeout(() => {
+                setActive(null);
+                setClosing(false);
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [closing]);
 
     useEffect(() => {
         if (active !== null && imgRef.current) {
-            const pinch = new Pinchable(imgRef.current, {
-                maxZoom: 3,
-                minZoom: 0.5,
-                velocity: 0.7,
-                applyTime: 400,
-            });
-            pinch.subscribeToPinching((zoom) => {
-                if (zoom < 0.7) {
-                    setActive(null);
+            const pinch = new Pinchable(
+                imgRef.current,
+                {
+                    maxZoom: 3,
+                    minZoom: 0.5,
+                    velocity: 0.7,
+                    applyTime: 400,
+                },
+            );
+            pinch.subscribeToPinching((zoom: number) => {
+                if (zoom < 0.6) {
+                    close();
                 }
             });
             return () => {
@@ -46,9 +64,9 @@ function App() {
                 ))}
             </div>
             {active !== null && (
-                <div className="overlay">
+                <div className={`overlay${closing ? " closing" : ""}`}>
                     <img ref={imgRef} src={images[active]} alt={`Full ${active + 1}`} />
-                    <button className="close-btn" onClick={() => setActive(null)}>
+                    <button className="close-btn" onClick={close}>
                         ✕
                     </button>
                 </div>
