@@ -21,8 +21,16 @@ function App() {
                 maxZoom: 3,
                 velocity: 0.7,
                 applyTime: 400,
+                minZoom: 0.5,
             });
-            return () => pinch.dispose();
+            pinch.subscribeToPinching((zoom) => {
+                if (zoom < 0.7) {
+                    setActive(null);
+                }
+            });
+            return () => {
+                pinch.dispose();
+            };
         }
     }, [active]);
 

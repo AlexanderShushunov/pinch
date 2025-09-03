@@ -709,6 +709,49 @@ describe("Pinch", () => {
         });
     });
 
+    describe("subscribeToPinching", () => {
+        test("calls callback on pinch", () => {
+            const { pinchable, start, move } = createPinch();
+            const cb = vi.fn();
+            pinchable.subscribeToPinching(cb);
+            start({ center: { x: 40, y: 40 }, distance: 50 });
+            move({ distance: 105 });
+            expect(cb).toHaveBeenCalledWith(2, { x: -40, y: -40 });
+        });
+
+        test("calls callback on focus", () => {
+            const { pinchable } = createPinch();
+            const cb = vi.fn();
+            pinchable.subscribeToPinching(cb);
+            pinchable.focus({ zoom: 2, to: { x: 0.5, y: 0.5 } });
+            expect(cb).toHaveBeenCalledWith(2, { x: -150, y: -100 });
+        });
+
+        test("unsubscribe removes callback", () => {
+            const { pinchable, start, move } = createPinch();
+            const cb = vi.fn();
+            const unsubscribe = pinchable.subscribeToPinching(cb);
+            start({ center: { x: 40, y: 40 }, distance: 50 });
+            move({ distance: 105 });
+            expect(cb).toHaveBeenCalledTimes(1);
+            unsubscribe();
+            move({ distance: 110 });
+            expect(cb).toHaveBeenCalledTimes(1);
+        });
+
+        test("dispose removes callback", () => {
+            const { pinchable, start, move } = createPinch();
+            const cb = vi.fn();
+            pinchable.subscribeToPinching(cb);
+            start({ center: { x: 40, y: 40 }, distance: 50 });
+            move({ distance: 105 });
+            expect(cb).toHaveBeenCalledTimes(1);
+            pinchable.dispose();
+            move({ distance: 110 });
+            expect(cb).toHaveBeenCalledTimes(1);
+        });
+    });
+
     test("should not allow manual pinch when disabled", () => {
         const { pinchable, ...pinch } = createPinch();
         pinch.start({
