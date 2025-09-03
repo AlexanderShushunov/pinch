@@ -19,10 +19,18 @@ function App() {
         if (active !== null && imgRef.current) {
             const pinch = new Pinchable(imgRef.current, {
                 maxZoom: 3,
+                minZoom: 0.5,
                 velocity: 0.7,
                 applyTime: 400,
             });
-            return () => pinch.dispose();
+            pinch.subscribeToPinching((zoom) => {
+                if (zoom < 0.7) {
+                    setActive(null);
+                }
+            });
+            return () => {
+                pinch.dispose();
+            };
         }
     }, [active]);
 
