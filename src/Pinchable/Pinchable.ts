@@ -27,6 +27,7 @@ export class Pinchable implements Disposable {
     private enabled = true;
     private startPinchingNotifier = new Notifier<[]>();
     private pinchingNotifier = new Notifier<[number, { x: number; y: number }]>();
+    private endPinchingNotifier = new Notifier<[]>();
     // change one per pinch
     private center = { x: 0, y: 0 };
     private prevZoom = 1;
@@ -59,6 +60,7 @@ export class Pinchable implements Disposable {
             element: element,
             onStart: this.handleStart,
             onPinch: this.handlePinch,
+            onEnd: this.handleEnd,
         });
         this.disableAfterApply = new ResettableFlag(params.applyTime);
         this.element = new PinchedElementWrapper(element, params.applyTime);
@@ -70,6 +72,7 @@ export class Pinchable implements Disposable {
         this.element.dispose();
         this.startPinchingNotifier.dispose();
         this.pinchingNotifier.dispose();
+        this.endPinchingNotifier.dispose();
     }
 
     /**
@@ -125,6 +128,10 @@ export class Pinchable implements Disposable {
         return this.pinchingNotifier.subscribe(callback);
     }
 
+    public subscribeToEnd(callback: () => void): () => void {
+        return this.endPinchingNotifier.subscribe(callback);
+    }
+
     private handleStart = () => {
         this.prevDist = this.rawPinchDetector.distance;
         this.zoom = this.normalizedZoom;
@@ -159,6 +166,10 @@ export class Pinchable implements Disposable {
         });
         this.pinchingNotifier.emit(this.normalizedZoom, this.normalizedShift);
         this.prevDist = curDist;
+    };
+
+    private handleEnd = () => {
+        this.endPinchingNotifier.emit();
     };
 
     private get normalizedZoom() {

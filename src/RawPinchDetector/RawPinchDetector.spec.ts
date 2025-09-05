@@ -10,6 +10,7 @@ describe("RawPinchDetector", () => {
     let events: UserEvent;
     const onStart = vi.fn();
     const onPinch = vi.fn();
+    const onEnd = vi.fn();
 
     beforeEach(() => {
         element = document.createElement("div");
@@ -17,10 +18,12 @@ describe("RawPinchDetector", () => {
         events = userEvent.setup();
         onStart.mockReset();
         onPinch.mockReset();
+        onEnd.mockReset();
         detector = new RawPinchDetector({
             element: element,
             onStart: onStart,
             onPinch: onPinch,
+            onEnd: onEnd,
         });
     });
 
@@ -48,6 +51,7 @@ describe("RawPinchDetector", () => {
             element: custom,
             onStart: vi.fn(),
             onPinch: vi.fn(),
+            onEnd: vi.fn(),
         });
         expect(custom.style.touchAction).toBe("none");
         localDetector.dispose();
@@ -72,6 +76,16 @@ describe("RawPinchDetector", () => {
         ]);
 
         expect(onPinch).toHaveBeenCalledTimes(1);
+    });
+
+    test("should invoke onEnd callback when user finishes pinching", async () => {
+        await asyncPointer([
+            { keys: "[TouchA>]", target: element, coords: { pageX: 10, pageY: 20 } },
+            { keys: "[TouchB>]", target: element, coords: { pageX: 50, pageY: 60 } },
+        ]);
+        await asyncPointer([{ keys: "[/TouchA]" }]);
+
+        expect(onEnd).toHaveBeenCalledTimes(1);
     });
 
     test("should calc center as a center between start fingers' positions", async () => {
@@ -187,6 +201,7 @@ describe("RawPinchDetector", () => {
                 element: element,
                 onStart: onStart,
                 onPinch: onPinch,
+                onEnd: onEnd,
             }).dispose();
             expect(addListenerSpy.mock.calls).toEqual(removeListenerSpy.mock.calls);
             addListenerSpy.mockRestore();

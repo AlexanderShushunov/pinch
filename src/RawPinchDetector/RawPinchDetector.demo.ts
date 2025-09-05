@@ -25,6 +25,9 @@ function initRawPinchDetectorDemo() {
         onPinch: () => {
             update();
         },
+        onEnd: () => {
+            update();
+        },
     });
 
     const update = () => {
