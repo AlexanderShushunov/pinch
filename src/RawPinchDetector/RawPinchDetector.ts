@@ -10,6 +10,7 @@ export class RawPinchDetector implements Disposable {
     private elementPos = { top: 0, left: 0 };
     private readonly onStart: () => void;
     private readonly onPinch: () => void;
+    private readonly onEnd: () => void;
     private readonly activePointers: PointerEvent[] = [];
     private readonly startPointers: PointerEvent[] = [];
     private readonly disableAfterUp = new ResettableFlag(100);
@@ -17,10 +18,11 @@ export class RawPinchDetector implements Disposable {
         touchAction: string;
     };
 
-    public constructor(params: { element: HTMLElement; onStart: () => void; onPinch: () => void }) {
+    public constructor(params: { element: HTMLElement; onStart: () => void; onPinch: () => void; onEnd: () => void }) {
         this.element = params.element;
         this.onStart = params.onStart;
         this.onPinch = params.onPinch;
+        this.onEnd = params.onEnd;
 
         this.initialStyles = {
             touchAction: this.element.style.touchAction,
@@ -109,12 +111,16 @@ export class RawPinchDetector implements Disposable {
     };
 
     private handleUp = (event: PointerEvent) => {
+        const wasPinch = this.isPinch;
         const index = this.activePointers.findIndex(withId(event.pointerId));
         if (index !== -1) {
             this.activePointers.splice(index, 1);
             this.startPointers.splice(index, 1);
         }
         this.disableAfterUp.reset();
+        if (wasPinch && !this.isPinch) {
+            this.onEnd();
+        }
     };
 
     private get firstIndex(): number {

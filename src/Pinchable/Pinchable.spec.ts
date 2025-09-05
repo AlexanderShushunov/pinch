@@ -73,6 +73,7 @@ describe("Pinch", () => {
 
         const onPinch = RawPinchDetectorMock.mock.calls[0][0].onPinch;
         const onStart = RawPinchDetectorMock.mock.calls[0][0].onStart;
+        const onEnd = RawPinchDetectorMock.mock.calls[0][0].onEnd;
 
         return {
             pinchable: pinchable,
@@ -85,6 +86,9 @@ describe("Pinch", () => {
                 distance = val.distance ?? distance;
                 shift = val.shift ?? shift;
                 onPinch();
+            },
+            end() {
+                onEnd();
             },
         };
     }
@@ -748,6 +752,43 @@ describe("Pinch", () => {
             expect(cb).toHaveBeenCalledTimes(1);
             pinchable.dispose();
             move({ distance: 110 });
+            expect(cb).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe("subscribeToEnd", () => {
+        test("calls callback on end", () => {
+            const { pinchable, start, end } = createPinch();
+            const cb = vi.fn();
+            pinchable.subscribeToEnd(cb);
+            start({ center: { x: 40, y: 40 }, distance: 50 });
+            end();
+            expect(cb).toHaveBeenCalledTimes(1);
+        });
+
+        test("unsubscribe removes callback", () => {
+            const { pinchable, start, end } = createPinch();
+            const cb = vi.fn();
+            const unsubscribe = pinchable.subscribeToEnd(cb);
+            start({ center: { x: 40, y: 40 }, distance: 50 });
+            end();
+            expect(cb).toHaveBeenCalledTimes(1);
+            unsubscribe();
+            start({ center: { x: 60, y: 60 }, distance: 70 });
+            end();
+            expect(cb).toHaveBeenCalledTimes(1);
+        });
+
+        test("dispose removes callback", () => {
+            const { pinchable, start, end } = createPinch();
+            const cb = vi.fn();
+            pinchable.subscribeToEnd(cb);
+            start({ center: { x: 40, y: 40 }, distance: 50 });
+            end();
+            expect(cb).toHaveBeenCalledTimes(1);
+            pinchable.dispose();
+            start({ center: { x: 60, y: 60 }, distance: 70 });
+            end();
             expect(cb).toHaveBeenCalledTimes(1);
         });
     });
