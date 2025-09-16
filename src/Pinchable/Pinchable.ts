@@ -4,6 +4,12 @@ import { ResettableFlag } from "../ResettableFlag";
 import type { Disposable } from "../Disposable";
 import { Notifier } from "../Notifier";
 
+type PinchEventsParams = {
+    start: [];
+    pinch: [number, { x: number; y: number }];
+    end: [];
+};
+
 const nonStart = -1;
 const defaultZoomThreshold = 0.2;
 const defaultShiftThreshold = 10;
@@ -25,9 +31,11 @@ export class Pinchable implements Disposable {
     private element: PinchedElementWrapper;
     private disableAfterApply: ResettableFlag;
     private enabled = true;
-    private startPinchingNotifier = new Notifier<[]>();
-    private pinchingNotifier = new Notifier<[number, { x: number; y: number }]>();
-    private endPinchingNotifier = new Notifier<[]>();
+    private notifiers: { [K in keyof PinchEventsParams]: Notifier<PinchEventsParams[K]> } = {
+        start: new Notifier<[]>(),
+        pinch: new Notifier<[number, { x: number; y: number }]>(),
+        end: new Notifier<[]>(),
+    };
     // change one per pinch
     private center = { x: 0, y: 0 };
     private prevZoom = 1;
@@ -70,9 +78,9 @@ export class Pinchable implements Disposable {
         this.rawPinchDetector.dispose();
         this.disableAfterApply.dispose();
         this.element.dispose();
-        this.startPinchingNotifier.dispose();
-        this.pinchingNotifier.dispose();
-        this.endPinchingNotifier.dispose();
+        this.notifiers.start.dispose();
+        this.notifiers.pinch.dispose();
+        this.notifiers.end.dispose();
     }
 
     /**
@@ -113,23 +121,29 @@ export class Pinchable implements Disposable {
             translate: this.normalizedShift,
             withTransition: true,
         });
-        this.pinchingNotifier.emit(this.normalizedZoom, this.normalizedShift);
+        this.notifiers.pinch.emit(this.normalizedZoom, this.normalizedShift);
     }
 
     public setEnabled(enabled: boolean): void {
         this.enabled = enabled;
     }
 
-    public subscribeToStartPinching(callback: () => void): () => void {
-        return this.startPinchingNotifier.subscribe(callback);
-    }
-
-    public subscribeToPinching(callback: (zoom: number, shift: { x: number; y: number }) => void): () => void {
-        return this.pinchingNotifier.subscribe(callback);
-    }
-
-    public subscribeToEnd(callback: () => void): () => void {
-        return this.endPinchingNotifier.subscribe(callback);
+    /**
+     * Subscribe to pinch events.
+     *
+     * @param event The event type to listen for.
+     *              - `"start"` fires when a pinch gesture begins.
+     *              - `"pinch"` fires continuously while the gesture is active,
+     *                providing the current zoom level and shift.
+     *              - `"end"` fires when the gesture ends.
+     * @param callback Callback invoked with event-specific arguments.
+     * @returns A function to unsubscribe the callback.
+     */
+    public subscribe<E extends keyof PinchEventsParams>(
+        event: E,
+        callback: (...args: PinchEventsParams[E]) => void,
+    ): () => void {
+        return this.notifiers[event].subscribe(callback);
     }
 
     private handleStart = () => {
@@ -144,7 +158,7 @@ export class Pinchable implements Disposable {
             x: (center.x - this.shift.x) / this.zoom,
             y: (center.y - this.shift.y) / this.zoom,
         };
-        this.startPinchingNotifier.emit();
+        this.notifiers.start.emit();
     };
 
     private handlePinch = () => {
@@ -164,12 +178,12 @@ export class Pinchable implements Disposable {
             translate: this.normalizedShift,
             withTransition: false,
         });
-        this.pinchingNotifier.emit(this.normalizedZoom, this.normalizedShift);
+        this.notifiers.pinch.emit(this.normalizedZoom, this.normalizedShift);
         this.prevDist = curDist;
     };
 
     private handleEnd = () => {
-        this.endPinchingNotifier.emit();
+        this.notifiers.end.emit();
     };
 
     private get normalizedZoom() {

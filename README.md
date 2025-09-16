@@ -51,9 +51,18 @@ pinchable.focus({
 pinchable.setEnabled(false);
 pinchable.setEnabled(true);
 
+// Subscribe to events
+const unsubscribe = pinchable.subscribe("pinch", (zoom, shift) => {
+    console.log(zoom, shift);
+});
+// later
+unsubscribe();
+
 // Clean up when done
 pinchable.dispose();
 ```
+
+`subscribe()` lets you listen for gesture lifecycle events. Use `'start'` for the beginning of a gesture, `'pinch'` for updates with `zoom` and `shift`, and `'end'` for completion. The method returns an `unsubscribe` function.
 
 `minZoom` defaults to `1`, preventing zooming out beyond the original size. Set it lower to allow zooming out while keeping the element centered.
 

@@ -679,11 +679,11 @@ describe("Pinch", () => {
         });
     });
 
-    describe("subscribeToStartPinching", () => {
+    describe("subscribe start event", () => {
         test("calls callback on start", () => {
             const { pinchable, start } = createPinch();
             const cb = vi.fn();
-            pinchable.subscribeToStartPinching(cb);
+            pinchable.subscribe("start", cb);
             start({ center: { x: 40, y: 40 }, distance: 50 });
             expect(cb).toHaveBeenCalledTimes(1);
             start({ center: { x: 60, y: 60 }, distance: 70 });
@@ -693,7 +693,7 @@ describe("Pinch", () => {
         test("unsubscribe removes callback", () => {
             const { pinchable, start } = createPinch();
             const cb = vi.fn();
-            const unsubscribe = pinchable.subscribeToStartPinching(cb);
+            const unsubscribe = pinchable.subscribe("start", cb);
             start({ center: { x: 40, y: 40 }, distance: 50 });
             expect(cb).toHaveBeenCalledTimes(1);
             unsubscribe();
@@ -704,7 +704,7 @@ describe("Pinch", () => {
         test("dispose removes callback", () => {
             const { pinchable, start } = createPinch();
             const cb = vi.fn();
-            pinchable.subscribeToStartPinching(cb);
+            pinchable.subscribe("start", cb);
             start({ center: { x: 40, y: 40 }, distance: 50 });
             expect(cb).toHaveBeenCalledTimes(1);
             pinchable.dispose();
@@ -713,11 +713,11 @@ describe("Pinch", () => {
         });
     });
 
-    describe("subscribeToPinching", () => {
+    describe("subscribe pinch event", () => {
         test("calls callback on pinch", () => {
             const { pinchable, start, move } = createPinch();
             const cb = vi.fn();
-            pinchable.subscribeToPinching(cb);
+            pinchable.subscribe("pinch", cb);
             start({ center: { x: 40, y: 40 }, distance: 50 });
             move({ distance: 105 });
             expect(cb).toHaveBeenCalledWith(2, { x: -40, y: -40 });
@@ -726,7 +726,7 @@ describe("Pinch", () => {
         test("calls callback on focus", () => {
             const { pinchable } = createPinch();
             const cb = vi.fn();
-            pinchable.subscribeToPinching(cb);
+            pinchable.subscribe("pinch", cb);
             pinchable.focus({ zoom: 2, to: { x: 0.5, y: 0.5 } });
             expect(cb).toHaveBeenCalledWith(2, { x: -150, y: -100 });
         });
@@ -734,7 +734,7 @@ describe("Pinch", () => {
         test("unsubscribe removes callback", () => {
             const { pinchable, start, move } = createPinch();
             const cb = vi.fn();
-            const unsubscribe = pinchable.subscribeToPinching(cb);
+            const unsubscribe = pinchable.subscribe("pinch", cb);
             start({ center: { x: 40, y: 40 }, distance: 50 });
             move({ distance: 105 });
             expect(cb).toHaveBeenCalledTimes(1);
@@ -746,7 +746,7 @@ describe("Pinch", () => {
         test("dispose removes callback", () => {
             const { pinchable, start, move } = createPinch();
             const cb = vi.fn();
-            pinchable.subscribeToPinching(cb);
+            pinchable.subscribe("pinch", cb);
             start({ center: { x: 40, y: 40 }, distance: 50 });
             move({ distance: 105 });
             expect(cb).toHaveBeenCalledTimes(1);
@@ -756,11 +756,11 @@ describe("Pinch", () => {
         });
     });
 
-    describe("subscribeToEnd", () => {
+    describe("subscribe end event", () => {
         test("calls callback on end", () => {
             const { pinchable, start, end } = createPinch();
             const cb = vi.fn();
-            pinchable.subscribeToEnd(cb);
+            pinchable.subscribe("end", cb);
             start({ center: { x: 40, y: 40 }, distance: 50 });
             end();
             expect(cb).toHaveBeenCalledTimes(1);
@@ -769,7 +769,7 @@ describe("Pinch", () => {
         test("unsubscribe removes callback", () => {
             const { pinchable, start, end } = createPinch();
             const cb = vi.fn();
-            const unsubscribe = pinchable.subscribeToEnd(cb);
+            const unsubscribe = pinchable.subscribe("end", cb);
             start({ center: { x: 40, y: 40 }, distance: 50 });
             end();
             expect(cb).toHaveBeenCalledTimes(1);
@@ -782,7 +782,7 @@ describe("Pinch", () => {
         test("dispose removes callback", () => {
             const { pinchable, start, end } = createPinch();
             const cb = vi.fn();
-            pinchable.subscribeToEnd(cb);
+            pinchable.subscribe("end", cb);
             start({ center: { x: 40, y: 40 }, distance: 50 });
             end();
             expect(cb).toHaveBeenCalledTimes(1);
