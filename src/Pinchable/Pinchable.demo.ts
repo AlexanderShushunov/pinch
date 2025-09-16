@@ -12,6 +12,15 @@ function createFillCanvas(container: HTMLElement): HTMLCanvasElement {
     return canvas;
 }
 
+function formatPoint(point: { x: number; y: number }): string {
+    return `[${point.x.toFixed(2)}, ${point.y.toFixed(2)}]`;
+}
+
+function getCurrentCenter(pinchable: Pinchable): { x: number; y: number } {
+    const internal = pinchable as unknown as { center: { x: number; y: number } };
+    return internal.center;
+}
+
 function drawPoint(canvas: HTMLCanvasElement, x: number, y: number): void {
     const ctx = canvas.getContext("2d");
     if (!ctx) {
@@ -91,6 +100,34 @@ export function initPinchableDemo(): void {
         return;
     }
 
+    const infoWidget = document.getElementById("infoWidget") as HTMLDivElement;
+
+    const subscribeToEvents = (instance: Pinchable): (() => void) => {
+        infoWidget.textContent = "nothing happened";
+
+        const unsubscribeStart = instance.subscribe("start", () => {
+            const center = getCurrentCenter(instance);
+            infoWidget.textContent = `center: ${formatPoint(center)}`;
+        });
+
+        const unsubscribePinch = instance.subscribe("pinch", (zoom, shift) => {
+            const center = getCurrentCenter(instance);
+            infoWidget.textContent =
+                `center: ${formatPoint(center)}\n` + `zoom: ${zoom.toFixed(2)}\n` + `shift: ${formatPoint(shift)}`;
+        });
+
+        const unsubscribeEnd = instance.subscribe("end", () => {
+            infoWidget.textContent = "ended";
+        });
+
+        return () => {
+            unsubscribeStart();
+            unsubscribePinch();
+            unsubscribeEnd();
+            infoWidget.textContent = "nothing happened";
+        };
+    };
+
     const canvas = createFillCanvas(container);
 
     // Draw reference points
@@ -116,6 +153,8 @@ export function initPinchableDemo(): void {
         zoomThreshold: zoomThreshold,
         shiftThreshold: shiftThreshold,
     });
+
+    let disposeSubscriptions = subscribeToEvents(pinchable);
 
     // Update value displays
     function updateValueDisplays(): void {
@@ -166,6 +205,7 @@ export function initPinchableDemo(): void {
     });
 
     function reinitializePinchable(): void {
+        disposeSubscriptions();
         pinchable.dispose();
         pinchable = new Pinchable(container, {
             maxZoom: maxZoom,
@@ -175,6 +215,7 @@ export function initPinchableDemo(): void {
             zoomThreshold: zoomThreshold,
             shiftThreshold: shiftThreshold,
         });
+        disposeSubscriptions = subscribeToEvents(pinchable);
     }
 
     // Button actions

@@ -39,6 +39,20 @@
                 align-items: center;
                 gap: 10px;
             }
+
+            .info-widget {
+                z-index: 10;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                min-width: 200px;
+                background-color: lightcoral;
+                opacity: 0.7;
+                padding: 8px 12px;
+                border-radius: 8px;
+                font-family: monospace;
+                white-space: pre-line;
+            }
         </style>
     </head>
     <body>
@@ -124,7 +138,7 @@
             </div>
         </article>
         <div class="pinchable-container" id="pinchContainer"></div>
-
+        <div id="infoWidget" class="info-widget">nothing happened</div>
         <script type="module" src="./Pinchable.demo.ts"></script>
     </body>
 </html>
