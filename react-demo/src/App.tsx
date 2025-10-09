@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Pinchable } from "pinchable";
 import "./App.css";
 
@@ -16,9 +16,9 @@ function App() {
     const [closing, setClosing] = useState(false);
     const imgRef = useRef<HTMLImageElement | null>(null);
 
-    const close = () => {
+    const close = useCallback(() => {
         setClosing(true);
-    };
+    }, []);
 
     useEffect(() => {
         if (closing) {
@@ -32,25 +32,38 @@ function App() {
 
     useEffect(() => {
         if (active !== null && imgRef.current) {
-            const pinch = new Pinchable(
-                imgRef.current,
-                {
-                    maxZoom: 3,
-                    minZoom: 0.5,
-                    velocity: 0.7,
-                    applyTime: 400,
-                },
-            );
-            pinch.subscribeToPinching((zoom: number) => {
-                if (zoom < 0.6) {
+            const pinch = new Pinchable(imgRef.current, {
+                maxZoom: 3,
+                minZoom: 0.5,
+                velocity: 0.7,
+                applyTime: 400,
+                nearZeroZoomThreshold: 0,
+            });
+
+            let lastZoom = 1;
+
+            const unsubscribePinch = pinch.subscribe("pinch", (zoom: number) => {
+                lastZoom = zoom;
+            });
+
+            const unsubscribeEnd = pinch.subscribe("end", () => {
+                if (lastZoom < 0.7) {
                     close();
+                    return;
+                }
+
+                if (lastZoom < 1) {
+                    pinch.focus({ zoom: 1, to: { x: 0.5, y: 0.5 } });
                 }
             });
+
             return () => {
+                unsubscribePinch();
+                unsubscribeEnd();
                 pinch.dispose();
             };
         }
-    }, [active]);
+    }, [active, close]);
 
     return (
         <div>
