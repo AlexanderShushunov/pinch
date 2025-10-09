@@ -11,7 +11,8 @@ type PinchEventsParams = {
 };
 
 const nonStart = -1;
-const defaultZoomThreshold = 0.2;
+const defaultEdgeZoomThreshold = 0.2;
+const defaultNearZeroZoomThreshold = 0.07;
 const defaultShiftThreshold = 10;
 
 function clamp(value: number, min: number, max: number): number {
@@ -22,7 +23,8 @@ export class Pinchable implements Disposable {
     private readonly params: {
         maxZoom: number;
         minZoom: number;
-        zoomThreshold: number;
+        edgeZoomThreshold: number;
+        nearZeroZoomThreshold: number;
         shiftThreshold: number;
         velocity: number;
         applyTime: number;
@@ -52,17 +54,30 @@ export class Pinchable implements Disposable {
         params: {
             maxZoom: number;
             minZoom?: number;
-            zoomThreshold?: number;
+            edgeZoomThreshold?: number;
+            nearZeroZoomThreshold?: number;
             shiftThreshold?: number;
             velocity: number;
             applyTime: number;
         },
     ) {
+        const {
+            minZoom = 1,
+            edgeZoomThreshold: providedEdgeZoomThreshold,
+            nearZeroZoomThreshold: providedNearZeroZoomThreshold,
+            shiftThreshold = defaultShiftThreshold,
+            ...restParams
+        } = params;
+
+        const edgeZoomThreshold = providedEdgeZoomThreshold ?? defaultEdgeZoomThreshold;
+        const nearZeroZoomThreshold = providedNearZeroZoomThreshold ?? defaultNearZeroZoomThreshold;
+
         this.params = {
-            minZoom: 1,
-            zoomThreshold: defaultZoomThreshold,
-            shiftThreshold: defaultShiftThreshold,
-            ...params,
+            minZoom,
+            edgeZoomThreshold,
+            nearZeroZoomThreshold,
+            shiftThreshold,
+            ...restParams,
         };
         this.rawPinchDetector = new RawPinchDetector({
             element: element,
@@ -187,7 +202,7 @@ export class Pinchable implements Disposable {
     };
 
     private get normalizedZoom() {
-        const { maxZoom, minZoom } = this.params;
+        const { maxZoom, minZoom, nearZeroZoomThreshold } = this.params;
         if (!this.isZoomCrossedOne) {
             return clamp(this.zoom, minZoom, maxZoom);
         }
@@ -195,27 +210,24 @@ export class Pinchable implements Disposable {
             return 1;
         }
         if (this.zoom > 1) {
-            return clamp(this.zoom - this.nearZeroZoomThreshold, minZoom, maxZoom);
+            return clamp(this.zoom - nearZeroZoomThreshold, minZoom, maxZoom);
         }
-        return clamp(this.zoom + this.nearZeroZoomThreshold, minZoom, maxZoom);
+        return clamp(this.zoom + nearZeroZoomThreshold, minZoom, maxZoom);
     }
 
     private get isZoomNearOne() {
-        return this.zoom > 1 - this.nearZeroZoomThreshold && this.zoom < 1 + this.nearZeroZoomThreshold;
+        const { nearZeroZoomThreshold } = this.params;
+        return this.zoom > 1 - nearZeroZoomThreshold && this.zoom < 1 + nearZeroZoomThreshold;
     }
 
     private get isZoomCrossedOne() {
         return (this.prevZoom <= 1 && this.zoom > 1) || (this.prevZoom >= 1 && this.zoom < 1);
     }
 
-    private get nearZeroZoomThreshold() {
-        return this.params.zoomThreshold / 3;
-    }
-
     private calcThresholdZoom(curDist: number) {
-        const { maxZoom, minZoom, velocity, zoomThreshold } = this.params;
+        const { maxZoom, minZoom, velocity, edgeZoomThreshold } = this.params;
         const candidate = (this.zoom * curDist) / (curDist + (this.prevDist - curDist) * velocity);
-        return clamp(candidate, minZoom - zoomThreshold, maxZoom + zoomThreshold);
+        return clamp(candidate, minZoom - edgeZoomThreshold, maxZoom + edgeZoomThreshold);
     }
 
     private get normalizedShift() {

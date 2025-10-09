@@ -65,7 +65,8 @@ describe("Pinch", () => {
             velocity: 1,
             applyTime: 300,
             minZoom: 1,
-            zoomThreshold: 0.3,
+            edgeZoomThreshold: 0.3,
+            nearZeroZoomThreshold: 0.1,
             shiftThreshold: 10,
         };
         const element = document.createElement("div");

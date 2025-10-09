@@ -60,8 +60,10 @@ export function initPinchableDemo(): void {
     const velocityValue = document.getElementById("velocityValue") as HTMLSpanElement;
     const applyTimeInput = document.getElementById("applyTime") as HTMLInputElement;
     const applyTimeValue = document.getElementById("applyTimeValue") as HTMLSpanElement;
-    const zoomThresholdInput = document.getElementById("zoomThreshold") as HTMLInputElement;
-    const zoomThresholdValue = document.getElementById("zoomThresholdValue") as HTMLSpanElement;
+    const edgeZoomThresholdInput = document.getElementById("edgeZoomThreshold") as HTMLInputElement;
+    const edgeZoomThresholdValue = document.getElementById("edgeZoomThresholdValue") as HTMLSpanElement;
+    const nearZeroZoomThresholdInput = document.getElementById("nearZeroZoomThreshold") as HTMLInputElement;
+    const nearZeroZoomThresholdValue = document.getElementById("nearZeroZoomThresholdValue") as HTMLSpanElement;
     const shiftThresholdInput = document.getElementById("shiftThreshold") as HTMLInputElement;
     const shiftThresholdValue = document.getElementById("shiftThresholdValue") as HTMLSpanElement;
     const resetButton = document.getElementById("resetButton") as HTMLButtonElement;
@@ -91,8 +93,10 @@ export function initPinchableDemo(): void {
         !minZoomValue ||
         !velocityValue ||
         !applyTimeValue ||
-        !zoomThresholdInput ||
-        !zoomThresholdValue ||
+        !edgeZoomThresholdInput ||
+        !edgeZoomThresholdValue ||
+        !nearZeroZoomThresholdInput ||
+        !nearZeroZoomThresholdValue ||
         !shiftThresholdInput ||
         !shiftThresholdValue
     ) {
@@ -141,7 +145,8 @@ export function initPinchableDemo(): void {
     let minZoom = parseFloat(minZoomInput.value);
     let velocity = parseFloat(velocityInput.value);
     let applyTime = parseInt(applyTimeInput.value, 10);
-    let zoomThreshold = parseFloat(zoomThresholdInput.value);
+    let edgeZoomThreshold = parseFloat(edgeZoomThresholdInput.value);
+    let nearZeroZoomThreshold = parseFloat(nearZeroZoomThresholdInput.value);
     let shiftThreshold = parseInt(shiftThresholdInput.value, 10);
 
     // Create Pinchable instance
@@ -150,7 +155,8 @@ export function initPinchableDemo(): void {
         minZoom: minZoom,
         velocity: velocity,
         applyTime: applyTime,
-        zoomThreshold: zoomThreshold,
+        edgeZoomThreshold: edgeZoomThreshold,
+        nearZeroZoomThreshold: nearZeroZoomThreshold,
         shiftThreshold: shiftThreshold,
     });
 
@@ -162,7 +168,8 @@ export function initPinchableDemo(): void {
         minZoomValue.textContent = minZoom.toString();
         velocityValue.textContent = velocity.toString();
         applyTimeValue.textContent = applyTime.toString();
-        zoomThresholdValue.textContent = zoomThreshold.toFixed(2);
+        edgeZoomThresholdValue.textContent = edgeZoomThreshold.toFixed(2);
+        nearZeroZoomThresholdValue.textContent = nearZeroZoomThreshold.toFixed(2);
         shiftThresholdValue.textContent = shiftThreshold.toString();
     }
     updateValueDisplays();
@@ -192,8 +199,14 @@ export function initPinchableDemo(): void {
         reinitializePinchable();
     });
 
-    zoomThresholdInput.addEventListener("input", () => {
-        zoomThreshold = parseFloat(zoomThresholdInput.value);
+    edgeZoomThresholdInput.addEventListener("input", () => {
+        edgeZoomThreshold = parseFloat(edgeZoomThresholdInput.value);
+        updateValueDisplays();
+        reinitializePinchable();
+    });
+
+    nearZeroZoomThresholdInput.addEventListener("input", () => {
+        nearZeroZoomThreshold = parseFloat(nearZeroZoomThresholdInput.value);
         updateValueDisplays();
         reinitializePinchable();
     });
@@ -212,7 +225,8 @@ export function initPinchableDemo(): void {
             minZoom: minZoom,
             velocity: velocity,
             applyTime: applyTime,
-            zoomThreshold: zoomThreshold,
+            edgeZoomThreshold: edgeZoomThreshold,
+            nearZeroZoomThreshold: nearZeroZoomThreshold,
             shiftThreshold: shiftThreshold,
         });
         disposeSubscriptions = subscribeToEvents(pinchable);
