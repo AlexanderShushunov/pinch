@@ -5,9 +5,9 @@ import type { Disposable } from "../Disposable";
 import { Notifier } from "../Notifier";
 
 type PinchEventsParams = {
-    start: [];
+    start: [{ x: number; y: number }];
     pinch: [number, { x: number; y: number }];
-    end: [];
+    end: [number];
 };
 
 const nonStart = -1;
@@ -34,9 +34,9 @@ export class Pinchable implements Disposable {
     private disableAfterApply: ResettableFlag;
     private enabled = true;
     private notifiers: { [K in keyof PinchEventsParams]: Notifier<PinchEventsParams[K]> } = {
-        start: new Notifier<[]>(),
+        start: new Notifier<[{ x: number; y: number }]>(),
         pinch: new Notifier<[number, { x: number; y: number }]>(),
-        end: new Notifier<[]>(),
+        end: new Notifier<[number]>(),
     };
     // change one per pinch
     private center = { x: 0, y: 0 };
@@ -173,7 +173,7 @@ export class Pinchable implements Disposable {
             x: (center.x - this.shift.x) / this.zoom,
             y: (center.y - this.shift.y) / this.zoom,
         };
-        this.notifiers.start.emit();
+        this.notifiers.start.emit(this.center);
     };
 
     private handlePinch = () => {
@@ -198,7 +198,7 @@ export class Pinchable implements Disposable {
     };
 
     private handleEnd = () => {
-        this.notifiers.end.emit();
+        this.notifiers.end.emit(this.normalizedZoom);
     };
 
     private get normalizedZoom() {
