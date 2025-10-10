@@ -1,6 +1,6 @@
 {
     "name": "pinchable",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "Lightweight, dependency-free library for smooth mobile pinch-zoom and panning on any HTML element.",
     "keywords": [
         "pinch",
