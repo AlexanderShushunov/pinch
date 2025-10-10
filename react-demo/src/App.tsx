@@ -40,25 +40,18 @@ function App() {
                 nearZeroZoomThreshold: 0,
             });
 
-            let lastZoom = 1;
-
-            const unsubscribePinch = pinch.subscribe("pinch", (zoom: number) => {
-                lastZoom = zoom;
-            });
-
-            const unsubscribeEnd = pinch.subscribe("end", () => {
-                if (lastZoom < 0.7) {
+            const unsubscribeEnd = pinch.subscribe("end", (zoom: number) => {
+                if (zoom < 0.7) {
                     close();
                     return;
                 }
 
-                if (lastZoom < 1) {
+                if (zoom < 1) {
                     pinch.focus({ zoom: 1, to: { x: 0.5, y: 0.5 } });
                 }
             });
 
             return () => {
-                unsubscribePinch();
                 unsubscribeEnd();
                 pinch.dispose();
             };
