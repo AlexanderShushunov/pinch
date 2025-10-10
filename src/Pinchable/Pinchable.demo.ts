@@ -109,8 +109,7 @@ export function initPinchableDemo(): void {
     const subscribeToEvents = (instance: Pinchable): (() => void) => {
         infoWidget.textContent = "nothing happened";
 
-        const unsubscribeStart = instance.subscribe("start", () => {
-            const center = getCurrentCenter(instance);
+        const unsubscribeStart = instance.subscribe("start", (center) => {
             infoWidget.textContent = `center: ${formatPoint(center)}`;
         });
 
@@ -120,8 +119,8 @@ export function initPinchableDemo(): void {
                 `center: ${formatPoint(center)}\n` + `zoom: ${zoom.toFixed(2)}\n` + `shift: ${formatPoint(shift)}`;
         });
 
-        const unsubscribeEnd = instance.subscribe("end", () => {
-            infoWidget.textContent = "ended";
+        const unsubscribeEnd = instance.subscribe("end", (zoom) => {
+            infoWidget.textContent = `ended at zoom: ${zoom.toFixed(2)}`;
         });
 
         return () => {
