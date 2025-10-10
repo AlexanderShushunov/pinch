@@ -16,6 +16,14 @@ Try Pinchable live:
 - **React demo** → https://pinch-react-demo.vercel.app/
 - **Vue demo** → https://pinch-vue-demo.vercel.app/
 
+### Try it on your phone
+
+Scan to open the live demo:
+
+| Playground                                                                                                                               | React demo                                                                                                                                             | Vue demo                                                                                                                                           |
+| ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [![QR Code](https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://pinch-six.vercel.app/)](https://pinch-six.vercel.app/) | [![QR Code](https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://pinch-react-demo.vercel.app/)](https://pinch-react-demo.vercel.app/) | [![QR Code](https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://pinch-vue-demo.vercel.app/)](https://pinch-vue-demo.vercel.app/) |
+
 ---
 
 ## Features
