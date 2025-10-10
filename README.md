@@ -130,7 +130,7 @@ pinchable.dispose();
 ## Development
 
 ```bash
-git clone https://github.com/AlexanderShushunov/pinch
+git clone https://github.com/AlexanderShushunov/pinchable
 cd pinch
 npm install
 npm run dev

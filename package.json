@@ -16,15 +16,15 @@
         "no-dependencies",
         "zoomable"
     ],
-    "author": "Alexander Shushunov <alex.shushunov.dev@gmail.com>",
+    "author": "Alexander Shushunov <alexader.shushunov@gmail.com>",
     "license": "MIT",
-    "homepage": "https://github.com/AlexanderShushunov/pinch#readme",
+    "homepage": "https://github.com/AlexanderShushunov/pinchable#readme",
     "repository": {
         "type": "git",
-        "url": "https://github.com/AlexanderShushunov/pinch.git"
+        "url": "https://github.com/AlexanderShushunov/pinchable.git"
     },
     "bugs": {
-        "url": "https://github.com/AlexanderShushunov/pinch/issues"
+        "url": "https://github.com/AlexanderShushunov/pinchable/issues"
     },
     "type": "module",
     "files": [

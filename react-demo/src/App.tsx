@@ -62,7 +62,7 @@ function App() {
         <div>
             <h1>Click and pinch</h1>
             <span>
-                Example for <a href="https://github.com/AlexanderShushunov/pinch">pinchable</a> lib
+                Example for <a href="https://github.com/AlexanderShushunov/pinchable">pinchable</a> lib
             </span>
             <div className="gallery">
                 {images.map((src, i) => (

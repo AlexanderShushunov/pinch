@@ -116,7 +116,7 @@ onBeforeUnmount(() => {
     <span>
       Example for
       <a
-        href="https://github.com/AlexanderShushunov/pinch"
+        href="https://github.com/AlexanderShushunov/pinchable"
         target="_blank"
         rel="noreferrer"
       >pinchable</a>

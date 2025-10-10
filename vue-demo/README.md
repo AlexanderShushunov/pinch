@@ -1,3 +1,3 @@
 # Click and pinch
 
-Example for [pinchable](https://github.com/AlexanderShushunov/pinch) lib built with Vue.
+Example for [pinchable](https://github.com/AlexanderShushunov/pinchable) lib built with Vue.
