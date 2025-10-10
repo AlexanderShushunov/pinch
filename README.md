@@ -1,91 +1,139 @@
 # Pinchable
 
-Lightweight, dependency-free wrapper that adds mobile-friendly pinch-zoom and panning to any HTML element.
+**Pinchable** is a **lightweight**, **dependency-free** JavaScript library that adds smooth **pinch-zoom** and **panning** to any HTML element — perfect for mobile galleries.
 
-## Demo
+[![npm](https://img.shields.io/npm/v/pinchable.svg)](https://www.npmjs.com/package/pinchable)
+[![Bundle size](https://img.shields.io/bundlephobia/minzip/pinchable)](https://bundlephobia.com/package/pinchable)
+[![License: MIT](https://img.shields.io/npm/l/pinchable)](LICENSE)
 
-Try Pinchable in one of the hosted demos:
+---
 
-- Interactive playground: https://pinch-six.vercel.app/
-- React demo: https://pinch-react-demo.vercel.app/
-- Vue demo: https://pinch-vue-demo.vercel.app/
+## Demos
+
+Try Pinchable live:
+
+- **Playground** → https://pinch-six.vercel.app/
+- **React demo** → https://pinch-react-demo.vercel.app/
+- **Vue demo** → https://pinch-vue-demo.vercel.app/
+
+---
 
 ## Features
 
-- Smooth pinch-zoom with the touch center anchored.
-- Panning with edge clamping and subtle thresholding for a natural feel.
-- Programmatic `focus()` to zoom to a specific point using normalized `[0..1]` coordinates.
-- `setEnabled()` to toggle gestures on the fly.
-- Clean `dispose()` teardown.
-- Works with any DOM element.
+- Smooth **pinch-zoom** anchored to touch center
+- **Pan** with edge clamping and threshold smoothing
+- **Programmatic zooming** via `focus({ zoom, to })` using normalized `[0–1]` coordinates
+- **Toggle gestures** dynamically with `setEnabled()`
+- **Event system**: `"start"`, `"pinch"`, `"end"` + `unsubscribe()` helpers
+- **Clean teardown** with `dispose()`
+- Works with **any DOM element** — no frameworks, no dependencies
 
-## Usage
+---
 
-You can install Pinchable via npm:
+## Installation
 
 ```bash
-npm install --save pinchable
+npm install pinchable
 ```
 
-Use it in your JavaScript or TypeScript project like this:
+or
+
+```bash
+yarn add pinchable
+```
+
+---
+
+## Basic Usage
 
 ```ts
 import { Pinchable } from "pinchable";
 
-const container = document.getElementById("photo") as HTMLElement;
+const container = document.getElementById("photo")!;
 
 const pinchable = new Pinchable(container, {
-    maxZoom: 3, // maximum zoom scale
-    minZoom: 0.5, // minimum zoom scale (1 = original size, default is 1)
-    edgeZoomThreshold: 0.2, // zoom overshoot tolerance before clamping (default is 0.2)
-    nearZeroZoomThreshold: 0.07, // smoothing zone around zoom = 1 before snapping (default is 0.07)
-    shiftThreshold: 10, // px allowed beyond edges before clamping (default is 10)
-    velocity: 0.7, // pinch sensitivity
-    applyTime: 400, // ms transition when programmatically focusing
+    maxZoom: 3,
+    minZoom: 0.5,
+    edgeZoomThreshold: 0.2,
+    nearZeroZoomThreshold: 0.07,
+    shiftThreshold: 10,
+    velocity: 0.7,
+    applyTime: 400,
 });
 
-// Programmatically zoom to a point
-pinchable.focus({
-    zoom: 2,
-    to: { x: 0.5, y: 0.5 }, // values between 0 and 1 (others will be clamped)
-});
+// Zoom to center
+pinchable.focus({ zoom: 2, to: { x: 0.5, y: 0.5 } });
 
-// Disable/enable gestures
+// Disable or enable gestures
 pinchable.setEnabled(false);
 pinchable.setEnabled(true);
 
 // Subscribe to events
-const unsubscribeStart = pinchable.subscribe("start", (center) => {
-    console.log("gesture started at", center);
-});
 const unsubscribePinch = pinchable.subscribe("pinch", (zoom, shift) => {
-    console.log(zoom, shift);
+    console.log("zoom", zoom, "shift", shift);
 });
-const unsubscribeEnd = pinchable.subscribe("end", (zoom) => {
-    console.log("gesture ended with zoom", zoom);
-});
-// later
-unsubscribeStart();
-unsubscribePinch();
-unsubscribeEnd();
 
-// Clean up when done
+// Cleanup
+unsubscribePinch();
 pinchable.dispose();
 ```
 
-`subscribe()` lets you listen for gesture lifecycle events. Use `'start'` for the beginning of a gesture (receives the current pinch center), `'pinch'` for updates with `zoom` and `shift`, and `'end'` for completion (receives the final `zoom`). Each subscription returns an `unsubscribe` function.
+---
 
-`minZoom` defaults to `1`, preventing zooming out beyond the original size. Set it lower to allow zooming out while keeping the element centered.
+## API Reference
 
-`edgeZoomThreshold` (default `0.2`) allows a small overshoot past `minZoom`/`maxZoom` before snapping back, `nearZeroZoomThreshold` (default `0.07`) defines a smoothing zone when crossing zoom `1`, and `shiftThreshold` (default `10`) lets panning move a few pixels beyond the edges for a softer clamp.
+| Method                         | Description                                                                 |
+| ------------------------------ | --------------------------------------------------------------------------- |
+| `focus({ zoom, to })`          | Programmatically zoom to a specific normalized point                        |
+| `setEnabled(enabled: boolean)` | Enable or disable gestures                                                  |
+| `subscribe(event, handler)`    | Listen to `"start"`, `"pinch"`, or `"end"` events (returns `unsubscribe()`) |
+| `dispose()`                    | Remove listeners and reset element                                          |
 
-`focus()` expects the `to` coordinates to be normalized between `0` and `1` relative to the element size; values outside this range are clamped.
+**Options**
+
+| Option                  | Default | Description                                    |
+| ----------------------- | ------- | ---------------------------------------------- |
+| `maxZoom`               | `3`     | Maximum zoom factor                            |
+| `minZoom`               | `1`     | Minimum zoom factor                            |
+| `edgeZoomThreshold`     | `0.2`   | Overshoot tolerance before clamping            |
+| `nearZeroZoomThreshold` | `0.07`  | Smoothing zone near zoom = 1                   |
+| `shiftThreshold`        | `10`    | Extra pixels beyond edges before clamping      |
+| `velocity`              | `0.7`   | Pinch sensitivity                              |
+| `applyTime`             | `400`   | Duration (ms) for programmatic zoom transition |
+
+---
 
 ## Compatibility
 
-- Mobile/touch devices only
-- Uses modern Pointer Events API (tested in evergreen mobile browsers).
+- Touch devices only
+- Based on the **Pointer Events API**
+- Tested on iOS Safari and Android Chrome
 
-## Notes
+---
 
-This is a personal pet project; APIs may change. Feedback and contributions are welcome!
+## Integrations
+
+- [React demo](https://pinch-react-demo.vercel.app/)
+- [Vue demo](https://pinch-vue-demo.vercel.app/)
+  Use the same core API — the wrapper handles setup only.
+
+---
+
+## Development
+
+```bash
+git clone https://github.com/AlexanderShushunov/pinch
+cd pinch
+npm install
+npm run dev
+```
+
+---
+
+## License
+
+MIT © [Alexander Shushunov](https://github.com/AlexanderShushunov)
+
+---
+
+**Keywords:** pinch zoom, gesture, touch, pan, mobile, pinchable, pinch-zoom, pointer events, no dependencies, vanilla js

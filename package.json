@@ -1,11 +1,32 @@
 {
     "name": "pinchable",
     "version": "0.3.0",
-    "type": "module",
+    "description": "Lightweight, dependency-free library for smooth mobile pinch-zoom and panning on any HTML element.",
+    "keywords": [
+        "pinch",
+        "zoom",
+        "gesture",
+        "touch",
+        "mobile",
+        "panning",
+        "pinch-zoom",
+        "touch-events",
+        "pointer-events",
+        "vanilla-js",
+        "no-dependencies",
+        "zoomable"
+    ],
+    "author": "Alexander Shushunov <alex.shushunov.dev@gmail.com>",
     "license": "MIT",
+    "homepage": "https://github.com/AlexanderShushunov/pinch#readme",
     "repository": {
-        "url": "https://github.com/AlexanderShushunov/pinch"
+        "type": "git",
+        "url": "https://github.com/AlexanderShushunov/pinch.git"
     },
+    "bugs": {
+        "url": "https://github.com/AlexanderShushunov/pinch/issues"
+    },
+    "type": "module",
     "files": [
         "lib/**/*",
         "README.md",
@@ -22,6 +43,7 @@
             "default": "./lib/index.js"
         }
     },
+    "sideEffects": false,
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
@@ -49,7 +71,7 @@
         "prettier": "^3.6.2",
         "typescript": "~5.8.3",
         "typescript-eslint": "^8.39.0",
-        "vite": "^7.1.0",
+        "vite": "^7.1.9",
         "vitest": "^3.2.4"
     }
 }
